@@ -18,13 +18,6 @@ function Square(props) {
   );
 }
 
-class Tile extends React.Component {
-
-  render() {
-    return <div className="city-tile">aaaa</div>
-  }
-}
-
 class City extends React.Component {
 
   render() {
@@ -32,9 +25,10 @@ class City extends React.Component {
     const tilesHtml = cityTiles.map((item, index) => {
 
       return (
-        <div key={index} className="city-tile" onClick={() => this.props.handleClickCityTile(index)}>
-          Tile {index} is {item!==null ? item : "?"}
-        </div>
+        // <div key={index} className="city-tile" onClick={() => this.props.handleClickCityTile(index)}>
+        //   Tile {index} is {item!==null ? item.clue : "?"}
+        // </div>
+        <img  key={index} src={"images/" + item.image + ".png"} alt="city tile" onClick={() => this.props.handleClickCityTile(index)} />
       );
     });
 
@@ -131,7 +125,8 @@ class Game extends React.Component {
       nextLocation : null,
       possibleChoices : [],
       cityTiles : [ Array(9).fill(null) ],
-      clueToDisplay : null,
+      displayCityTile : null,
+      //clueToDisplay : null,
       displayClue : false
     }
 
@@ -174,20 +169,73 @@ class Game extends React.Component {
     let cityTiles = Array(9).fill(null);
     console.log("we have this many clues")
     console.log(nextLocation.clues.length)
+    // for each of our clues put them into a city tile
     for(let i = 0; i < nextLocation.clues.length; i++) {
       var clueSet = false;
       while(!clueSet) {
         var cityIndex = randomIntFromInterval(0, 8);
         console.log(cityTiles[cityIndex])
         if(null === cityTiles[cityIndex]) {
-          console.log("setting clue " + i + " to tile " + cityIndex)
-          cityTiles[cityIndex] = i;
+          console.log("setting clue " + i + " to tile " + nextLocation.clues[i])
+          cityTiles[cityIndex] = {
+            talkingTo: "shop keeper",
+            clue: nextLocation.clues[i],
+            image: "shop"
+          };
           clueSet = true;
-          
         }
       }
     }
+    // for our other, non-clue tiles, populate them with something
+    for(let i =0; i < cityTiles.length; i++) {
+      if(!cityTiles[i]) {
+        // only do this if there is currently no data for this city tile
+        var talkingTo = "Poop";
+        var clue = "[stink]";
+        var image = "poop";
+        var rand = randomIntFromInterval(1, 100);
+        if (rand < 2) {
+          talkingTo = "Dog";
+          clue = "Woof woof woof. Woof.";
+          image = "dog"
+        } else if (rand < 4) {
+          talkingTo = "Tree";
+          clue = "Rustle rustle.";
+          image = "tree"
+        } else if (rand < 6) {
+          talkingTo = "Cow";
+          clue = "Mooooooooooooooooooooooooooooooo ... Moo!";
+          image = "cow"
+        } else if (rand < 30) {
+          talkingTo = "Shop keeper";
+          clue = this.getNonHelpfulResponse();
+          image = "shop"
+        } else if (rand < 50) {
+          talkingTo = "Random citizen";
+          clue = this.getNonHelpfulResponse();
+          image = "citizen"
+        } else  {
+          talkingTo = "You";
+          clue = "[there's nothing here]";
+          image = "nothing"
+        }
+
+        cityTiles[i] = {
+          talkingTo: talkingTo,
+          clue: clue,
+          image: image
+        };
+      }
+    }
     return cityTiles;
+  }
+
+  getNonHelpfulResponse() {
+    let response = "";
+    let possibleResponses = ["You look like a cop. I don't talk to cops.", "Who are you?"];
+    var rand = randomIntFromInterval(0, possibleResponses.length-1);
+    response = possibleResponses[rand];
+    return response;
   }
 
   getLocationByName(name, locations) {
@@ -234,6 +282,10 @@ class Game extends React.Component {
     return possibleChoices;
   }
 
+  handleClickCloseCloseDisplay() {
+    this.setState({ displayClue : false });
+  }
+
   handleClickTravelTo(name) {
     let travelToThisLocation = this.getLocationByName(name, this.state.locations);
     this.travelToLocation(travelToThisLocation);
@@ -243,51 +295,41 @@ class Game extends React.Component {
     var clickedCityTileData = this.state.cityTiles[index];
     if(clickedCityTileData!==null) {
       console.log("data is " + clickedCityTileData);
-      let clue = this.state.nextLocation.clues[clickedCityTileData];
-      console.log("clue is " + clue)
       this.setState({
-        clueToDisplay : clue,
+        //clueToDisplay : clickedCityTileData.clue,
+        displayCityTile : clickedCityTileData,
         displayClue : true
       })
     } else {
       this.setState({
-        clueToDisplay : "you look like a cop, I don't talk to cops",
+        //clueToDisplay : "you look like a cop, I don't talk to cops",
+        displayCityTile : clickedCityTileData,
         displayClue : true
       })
     }
     console.log("clicked on " + index)
   }
 
-  jumpTo(step) {
-    this.setState({ stepNumber : step, xIsNext: (step % 2) === 0 })
-  }
+  // handleClick(i) {
+  //   const history = this.state.history.slice(0, this.state.stepNumber + 1);
+  //   const current = history[history.length - 1];
+  //   const squares = current.squares.slice();
+  //   if (calculateWinner(squares).winner || squares[i]) {
+  //     return;
+  //   }
 
-  handleSwitcharooClick() {
-    this.setState({
-      sortOrderAsc : !this.state.sortOrderAsc
-    })
-  }
+  //   const row = Math.floor(i / 3) +1;
+  //   const col = i % 3 + 1
 
-  handleClick(i) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
-    const current = history[history.length - 1];
-    const squares = current.squares.slice();
-    if (calculateWinner(squares).winner || squares[i]) {
-      return;
-    }
-
-    const row = Math.floor(i / 3) +1;
-    const col = i % 3 + 1
-
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      history: history.concat([{
-        squares: squares, col : col, row: row
-      }]),
-      xIsNext: !this.state.xIsNext,
-      stepNumber : history.length
-    });
-  }
+  //   squares[i] = this.state.xIsNext ? 'X' : 'O';
+  //   this.setState({
+  //     history: history.concat([{
+  //       squares: squares, col : col, row: row
+  //     }]),
+  //     xIsNext: !this.state.xIsNext,
+  //     stepNumber : history.length
+  //   });
+  // }
 
   render() {
     const history = this.state.history;
@@ -322,38 +364,32 @@ class Game extends React.Component {
       );
     });
 
-    var clueDisplay = <div className="clue-display">{this.state.clueToDisplay}</div>;
+    var clueDisplay = <div className="clue-display">{this.state.displayCityTile ? this.state.displayCityTile.talkingTo + ": " + this.state.displayCityTile.clue : ""}<div className="close-clue-display" onClick={() => this.handleClickCloseCloseDisplay()}>X</div></div>;
 
-    let status;
-    if (winner) {
-      status = 'Winner: ' + winner;
-    } else if(blankSqaureCount === 0) {
-      status = "Awww, looks like it's a crappy ol' draw";      
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
+    // let status;
+    // if (winner) {
+    //   status = 'Winner: ' + winner;
+    // } else if(blankSqaureCount === 0) {
+    //   status = "Awww, looks like it's a crappy ol' draw";      
+    // } else {
+    //   status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    // }
 
     return (
       <div className="game">
         <div className="location-info">
-          <div className="location">Current: { this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div>
+          <div className="location">Welcome to <div className="current-location">{ this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div></div>
           <div className="location">Last Seen:    { this.state.lastSeenLocation ? this.state.lastSeenLocation.name + "!" : "unknown" }</div>
           <div className="location">Next:    { this.state.nextLocation ? this.state.nextLocation.name + "!" : "unknown" }</div>
-          <div>Where do you want to go? {possibleChoicesHtml}</div>
+          
         </div>
         <br/>
         <div className="game-board">
           {/* <Board squares={current.squares} onClick={(i) => this.handleClick(i)} winningSquares={winningSquares} /> */}
           <City cityTiles={this.state.cityTiles} handleClickCityTile={(index) => this.handleClickCityTile(index)}/>
-        </div>
           {this.state.displayClue ? clueDisplay : ""}
-        {/* <div className="game-info">
-          <div>{ status }</div>
-          <ol>{ this.state.sortOrderAsc ? moves : moves.reverse() }</ol>
-          <button onClick={() => this.handleSwitcharooClick()}>
-            Do A Switcharoo
-          </button>
-        </div> */}
+        </div>
+        <div>Where do you want to go? {possibleChoicesHtml}</div>
       </div>
     );
   }
