@@ -28,7 +28,7 @@ class City extends React.Component {
         // <div key={index} className="city-tile" onClick={() => this.props.handleClickCityTile(index)}>
         //   Tile {index} is {item!==null ? item.clue : "?"}
         // </div>
-        <img  key={index} src={"images/" + item.image + ".png"} alt="city tile" onClick={() => this.props.handleClickCityTile(index)} />
+        <img  key={index} src={"images/" + item.image + ".png"} className="city-tile-image" alt="city tile" onClick={() => this.props.handleClickCityTile(index)} />
       );
     });
 
@@ -165,6 +165,25 @@ class Game extends React.Component {
     }
   }
 
+  assignPersonDetails(personType) {
+    // how many different images of each type do we have?
+    let imageCounts = { // todo, put this somewhere else
+      shop : 2,
+      citizen : 3
+    };
+    if(!personType) {
+      // make it 50/50 between shop keepers or citizens
+      personType = randomIntFromInterval(0, 1) === 0 ? "shop" : "citizen";
+    }
+    let imageCount = imageCounts[personType];
+    var imageIndex = randomIntFromInterval(1, imageCount);  
+    let helpfulPerson = {
+      talkingTo: personType === "shop" ? "Shop keeper" : "Random citizen",
+      image: personType + imageIndex
+    }
+    return helpfulPerson;
+  }
+
   createCityTiles(nextLocation) {
     let cityTiles = Array(9).fill(null);
     console.log("we have this many clues")
@@ -176,11 +195,15 @@ class Game extends React.Component {
         var cityIndex = randomIntFromInterval(0, 8);
         console.log(cityTiles[cityIndex])
         if(null === cityTiles[cityIndex]) {
+
+          var person = this.assignPersonDetails();
+
           console.log("setting clue " + i + " to tile " + nextLocation.clues[i])
+          console.log(person)
           cityTiles[cityIndex] = {
-            talkingTo: "shop keeper",
+            talkingTo: person.talkingTo,
             clue: nextLocation.clues[i],
-            image: "shop"
+            image: person.image
           };
           clueSet = true;
         }
@@ -206,14 +229,16 @@ class Game extends React.Component {
           talkingTo = "Cow";
           clue = "Mooooooooooooooooooooooooooooooo ... Moo!";
           image = "cow"
-        } else if (rand < 30) {
-          talkingTo = "Shop keeper";
-          clue = this.getNonHelpfulResponse();
-          image = "shop"
         } else if (rand < 50) {
-          talkingTo = "Random citizen";
+          var person = this.assignPersonDetails("shop");
+          talkingTo = person.talkingTo;
           clue = this.getNonHelpfulResponse();
-          image = "citizen"
+          image = person.image
+        } else if (rand < 90) {
+          var person = this.assignPersonDetails("citizen");
+          talkingTo = person.talkingTo;
+          clue = this.getNonHelpfulResponse();
+          image = person.image
         } else  {
           talkingTo = "You";
           clue = "[there's nothing here]";
