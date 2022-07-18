@@ -83,6 +83,9 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+
+  personImageIndex = 0;
+
   constructor(props) {
     
     const locations = [
@@ -114,6 +117,13 @@ class Game extends React.Component {
     ];
 
     super(props);
+
+    // how many different images of each type do we have?
+    let imageCounts = {
+      shop : 4,
+      citizen : 7
+    };
+
     this.state = {
       history : [ { squares: Array(9).fill(null), col: null, row: null} ],
       xIsNext : true,
@@ -126,10 +136,12 @@ class Game extends React.Component {
       possibleChoices : [],
       cityTiles : [ Array(9).fill(null) ],
       displayCityTile : null,
-      //clueToDisplay : null,
-      displayClue : false
+      displayClue : false,
+      imageCounts : imageCounts,
     }
 
+
+    // todo this should be in componentDidMount?
     var currentLocation = this.getLocationByName("Scotland", locations);
     var nextLocation = this.getNextLocation(currentLocation, locations);
     var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations);
@@ -137,11 +149,17 @@ class Game extends React.Component {
     this.state.lastSeenLocation = currentLocation;
     this.state.nextLocation = nextLocation;
     this.state.possibleChoices = possibleChoices;
-    this.state.cityTiles = this.createCityTiles(nextLocation);
-    // this.setState({ 
-    //   currentLocation : currentLocation,
-    //   nextLocation : nextLocation
-    // })
+    
+  }
+
+  componentDidMount() {
+    // setup the image index for our people - this pics where we will randomly start getting
+    // our citizen images from the array
+    let imageCount = this.state.imageCounts["citizen"];
+    this.personImageIndex = randomIntFromInterval(1, imageCount);
+
+    var nextLocation = this.state.nextLocation;
+    this.setState( { cityTiles : this.createCityTiles(nextLocation) });
   }
 
   travelToLocation(travelToLocation) {
@@ -166,17 +184,28 @@ class Game extends React.Component {
   }
 
   assignPersonDetails(personType) {
-    // how many different images of each type do we have?
-    let imageCounts = { // todo, put this somewhere else
-      shop : 2,
-      citizen : 3
-    };
+
     if(!personType) {
       // make it 50/50 between shop keepers or citizens
       personType = randomIntFromInterval(0, 1) === 0 ? "shop" : "citizen";
     }
-    let imageCount = imageCounts[personType];
-    var imageIndex = randomIntFromInterval(1, imageCount);  
+
+    let imageIndex = null;
+    if(personType === 'citizen') {
+      // for a person we're going to iterate through them rather than just getting a random one
+      imageIndex = this.personImageIndex;
+      
+      imageIndex++;
+      if(imageIndex > this.state.imageCounts[personType]) {
+        imageIndex = 1;
+      }
+      this.personImageIndex = imageIndex;
+    } else {
+      // for shops just get a random image
+      let imageCount = this.state.imageCounts[personType];
+      imageIndex = randomIntFromInterval(1, imageCount); 
+    }
+ 
     let helpfulPerson = {
       talkingTo: personType === "shop" ? "Shop keeper" : "Random citizen",
       image: personType + imageIndex
@@ -186,20 +215,17 @@ class Game extends React.Component {
 
   createCityTiles(nextLocation) {
     let cityTiles = Array(9).fill(null);
-    console.log("we have this many clues")
-    console.log(nextLocation.clues.length)
     // for each of our clues put them into a city tile
     for(let i = 0; i < nextLocation.clues.length; i++) {
       var clueSet = false;
       while(!clueSet) {
         var cityIndex = randomIntFromInterval(0, 8);
-        console.log(cityTiles[cityIndex])
         if(null === cityTiles[cityIndex]) {
 
           var person = this.assignPersonDetails();
 
-          console.log("setting clue " + i + " to tile " + nextLocation.clues[i])
-          console.log(person)
+          // console.log("setting clue " + i + " to tile " + nextLocation.clues[i])
+          // console.log(person)
           cityTiles[cityIndex] = {
             talkingTo: person.talkingTo,
             clue: nextLocation.clues[i],
@@ -273,8 +299,8 @@ class Game extends React.Component {
   }
 
   getNextLocation(currentLocation, locations) {
-    console.log("in getNextLocation")
-    console.log(locations)
+    // console.log("in getNextLocation")
+    // console.log(locations)
     var nextLocationIndex = randomIntFromInterval(0, locations.length-1);
     var nextLocation = locations[nextLocationIndex];
     if(currentLocation.name === nextLocation.name) {
@@ -402,7 +428,7 @@ class Game extends React.Component {
 
     return (
       <div className="game">
-        <div className="location-info">
+        <div className="location-info">PII is {this.state.personImageIndex}
           <div className="location">Welcome to <div className="current-location">{ this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div></div>
           <div className="location">Last Seen:    { this.state.lastSeenLocation ? this.state.lastSeenLocation.name + "!" : "unknown" }</div>
           <div className="location">Next:    { this.state.nextLocation ? this.state.nextLocation.name + "!" : "unknown" }</div>
