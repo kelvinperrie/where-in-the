@@ -1,5 +1,6 @@
 body {
-  font: 14px "Century Gothic", Futura, sans-serif;
+  /* font: 14px "Century Gothic", Futura, sans-serif; */
+  font-family: 'Roboto', sans-serif;
   margin: 20px;
 }
 
@@ -16,14 +17,14 @@ ol, ul {
 .game {
   max-width: 600px;
   margin: auto;
-  background-color: aliceblue;
+  background-color: #f7bb64;
   padding: 1em;
 }
 
 .game-board {
   max-width: 600px;
   position: relative;
-  background-color: #fff;
+  background-color: #a6fdb3;
 }
 
 .city-tile {
@@ -38,6 +39,7 @@ ol, ul {
 }
 
 .clue-display {
+  font-size: 1.25em;
   position: absolute;
   top: 150px;
   background-color: #fff;
@@ -63,6 +65,17 @@ ol, ul {
   background-color: #ffd6d6;
 }
 
+.clue-text { 
+  display: inline-block;
+  width: 62%;
+  vertical-align: top;
+}
+.clue-talker {
+  display: inline-block;
+  width: 34%;
+  text-align: right;
+  padding-right: 0.5em;
+}
 
 .location {
   text-align: center;
@@ -70,49 +83,24 @@ ol, ul {
 .current-location {
   font-size: 3em;
   color: #ff9800;
+  background-color: #fff;
+  margin: 0.25em 0;
 }
 
-/* 
-.status {
-  margin-bottom: 10px;
-}
-
-.square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 34px;
-  height: 34px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
+.possible-choice {
   text-align: center;
-  width: 34px;
+  border: 3px orange solid;
+  border-radius: 10px;
+  background-color: white;
+  padding: 0.25em;
+  margin: 0.1em 0.25em;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #ff9800;
 }
-
-.square:focus {
-  outline: none;
+.possible-choice:hover {
+  background-color: #f9d9a5;
 }
-
-.kbd-navigation .square:focus {
-  background: #ddd;
-} */
-
-/* .game {
-  display: flex;
-  flex-direction: row;
-} */
-/* 
-.game-info {
-  margin-left: 20px;
+.possible-choices-heading {
+  margin: .5em 0;
 }
-
-.active-step {
-  font-weight: bold;
-}
-
-.winningSquare {
-  background-color: greenyellow;
-} */
