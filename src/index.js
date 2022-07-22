@@ -146,7 +146,7 @@ class Game extends React.Component {
     // todo this should be in componentDidMount?
     var currentLocation = this.getLocationByName("Scotland", locations);
     var nextLocation = this.getNextLocation(currentLocation, locations);
-    var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations);
+    var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
     this.state.currentLocation = currentLocation;
     this.state.lastSeenLocation = currentLocation;
     this.state.nextLocation = nextLocation;
@@ -170,7 +170,7 @@ class Game extends React.Component {
       // they are moving to the correct place :)
       var currentLocation = travelToLocation;
       var nextLocation = this.getNextLocation(currentLocation, locations);
-      var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations);
+      var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
       this.setState({
         currentLocation : currentLocation,
         lastSeenLocation : currentLocation,
@@ -181,6 +181,23 @@ class Game extends React.Component {
 
     } else {
       // they are not moving to the correct place ...
+      var currentLocation = travelToLocation;
+      // however, they might have moved to the last known place, in which case we want to setup the clues again
+      let nextLocation = null;
+      if(currentLocation.name === this.state.lastSeenLocation.name) {
+        nextLocation = this.state.nextLocation;
+      }
+      //var nextLocation = this.getNextLocation(currentLocation, locations);
+      // pass null for the next location so we end up with 3 random possible locations - there is a chance
+      // it will have the next location in it, but probably not
+      var possibleChoices = this.getPossibleChoices(currentLocation, null, locations, 3);
+      this.setState({
+        currentLocation : currentLocation,
+        //lastSeenLocation : currentLocation, // this doesn't change, they're still in the same last seen location
+        //nextLocation : nextLocation, // this doesn't change, they're still in a location we haven't gone too
+        possibleChoices : possibleChoices,
+        cityTiles : this.createCityTiles(nextLocation)
+      })
 
     }
   }
@@ -218,22 +235,25 @@ class Game extends React.Component {
   createCityTiles(nextLocation) {
     let cityTiles = Array(9).fill(null);
     // for each of our clues put them into a city tile
-    for(let i = 0; i < nextLocation.clues.length; i++) {
-      var clueSet = false;
-      while(!clueSet) {
-        var cityIndex = randomIntFromInterval(0, 8);
-        if(null === cityTiles[cityIndex]) {
+    if(nextLocation) {
+      // it's possible that we will be somewhere that doesn't have access to the next location
+      for(let i = 0; i < nextLocation.clues.length; i++) {
+        var clueSet = false;
+        while(!clueSet) {
+          var cityIndex = randomIntFromInterval(0, 8);
+          if(null === cityTiles[cityIndex]) {
 
-          let person = this.assignPersonDetails();
+            let person = this.assignPersonDetails();
 
-          // console.log("setting clue " + i + " to tile " + nextLocation.clues[i])
-          // console.log(person)
-          cityTiles[cityIndex] = {
-            talkingTo: person.talkingTo,
-            clue: nextLocation.clues[i],
-            image: person.image
-          };
-          clueSet = true;
+            // console.log("setting clue " + i + " to tile " + nextLocation.clues[i])
+            // console.log(person)
+            cityTiles[cityIndex] = {
+              talkingTo: person.talkingTo,
+              clue: nextLocation.clues[i],
+              image: person.image
+            };
+            clueSet = true;
+          }
         }
       }
     }
@@ -317,13 +337,20 @@ class Game extends React.Component {
     return nextLocation;
   }
 
-  getPossibleChoices(currentLocation, nextLocation, locations) {
+  /* get a collection of possible next locations to travel too. They can't be the current location (you don't travel
+    from a place to the same place). The next location has to be included in the list.
+    currentLocation : where we currently are - cannot be in the returned list
+    nextLocation    : where we should be going to next - needs to be in the returned list
+    locations       : the collection of possible locations
+    choiceCount     : how many possible locations we need to return
+  */
+  getPossibleChoices(currentLocation, nextLocation, locations, choiceCount) {
     var possibleChoices = [];
-    while(possibleChoices.length < 2) {
+    while(possibleChoices.length < choiceCount) {
       var possibleChoice = null;
       var nextChoiceIndex = randomIntFromInterval(0, locations.length-1);
       possibleChoice = locations[nextChoiceIndex];
-      if(possibleChoice.name !== currentLocation.name && possibleChoice.name !== nextLocation.name) {
+      if(possibleChoice.name !== currentLocation.name && (nextLocation===null || possibleChoice.name !== nextLocation.name)) {
         var duplicate = false;
         for(let i = 0; i <possibleChoices.length; i++) {
           if(possibleChoices[i].name === possibleChoice.name) {
@@ -336,8 +363,10 @@ class Game extends React.Component {
         }
       }
     }
-    var insertIndex = randomIntFromInterval(0, 2);
-    possibleChoices.splice(insertIndex,0,nextLocation);
+    if(nextLocation) {
+      var insertIndex = randomIntFromInterval(0, 2);
+      possibleChoices.splice(insertIndex,0,nextLocation);
+    }
     return possibleChoices;
   }
 
@@ -400,7 +429,7 @@ class Game extends React.Component {
     const possibleChoicesHtml = possibleChoices.map((choice, index) => {
 
       return (
-        <div className="possible-choice" onClick={ () => this.handleClickTravelTo(choice.name) }>{choice.name}</div>
+        <div className="possible-choice" key={index} onClick={ () => this.handleClickTravelTo(choice.name) }>{choice.name}</div>
         /* <li key={index}>
           <button className="possible-choice" onClick={ () => this.handleClickTravelTo(choice.name) }>{choice.name}</button>
         </li> */
@@ -420,7 +449,7 @@ class Game extends React.Component {
           
         </div>
         <br/>
-        <div className="game-board">
+        <div className="game-board" key="sdf112sdf">
           <City cityTiles={this.state.cityTiles} handleClickCityTile={(index) => this.handleClickCityTile(index)}/>
           {this.state.displayClue ? clueDisplay : ""}
         </div>
