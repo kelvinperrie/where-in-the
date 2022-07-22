@@ -3,21 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import $ from 'jquery';
 
-function Square(props) {
-
-  let className = "square";
-  if(props.isWinningSquare) {
-    className += " winningSquare";
-  }
-
-  return (
-    <button 
-        className={className} 
-        onClick={props.onClick}>
-      {props.value}
-    </button>
-  );
-}
 
 class City extends React.Component {
 
@@ -37,51 +22,6 @@ class City extends React.Component {
   }
 }
 
-class Board extends React.Component {
-
-  renderSquare(i) {
-    return <Square key={i}
-        isWinningSquare={this.props.winningSquares && this.props.winningSquares.includes(i)}
-        value={this.props.squares[i]} 
-        onClick={() => this.props.onClick(i)}
-      />;
-  }
-
-  render() {
-    let theBoard = [];
-    let index = 0;
-    for(var row = 0; row < 3; row ++) {
-      var theRow = [];
-      for(var col = 0; col < 3; col ++) {
-        theRow.push(<span key={index}>{this.renderSquare(index)}</span>);
-        index++;
-      }
-      theBoard.push(<div key={row} className="board-row">{theRow}</div>);
-    }
-    return (<div>{theBoard}</div>);
-
-    // return (
-
-    //   <div>
-    //     <div className="board-row">
-    //       {this.renderSquare(0)}
-    //       {this.renderSquare(1)}
-    //       {this.renderSquare(2)}
-    //     </div>
-    //     <div className="board-row">
-    //       {this.renderSquare(3)}
-    //       {this.renderSquare(4)}
-    //       {this.renderSquare(5)}
-    //     </div>
-    //     <div className="board-row">
-    //       {this.renderSquare(6)}
-    //       {this.renderSquare(7)}
-    //       {this.renderSquare(8)}
-    //     </div>
-    //   </div>
-    // );
-  }
-}
 
 class Game extends React.Component {
 
@@ -126,10 +66,6 @@ class Game extends React.Component {
     };
 
     this.state = {
-      history : [ { squares: Array(9).fill(null), col: null, row: null} ],
-      xIsNext : true,
-      stepNumber : 0,
-      sortOrderAsc : true,
       locations : locations,
       currentLocation : null,
       lastSeenLocation : null,
@@ -140,6 +76,7 @@ class Game extends React.Component {
       displayClue : false,                  // a flag indicating if the dialog is open showing a clue
       displayedClue : "",                   // the text of the clue to display
       imageCounts : imageCounts,            // an object that tells us how many items there are in each type of image/city tile
+      history : []
     }
 
 
@@ -164,19 +101,33 @@ class Game extends React.Component {
     this.setState( { cityTiles : this.createCityTiles(nextLocation) });
   }
 
-  travelToLocation(travelToLocation) {
+  travelToLocation(travelToLocation, backTracking) {
+    // if we're backtracking then we don't want to add to our history ... we want to remove from it
+
+    var travellingFrom = this.state.currentLocation;
+    let history = this.state.history;
+    if(backTracking) {
+      history.pop();
+    } else {
+      history.push(travellingFrom);
+    }
+
     let locations = this.state.locations;
     if(travelToLocation.name === this.state.nextLocation.name) {
       // they are moving to the correct place :)
       var currentLocation = travelToLocation;
       var nextLocation = this.getNextLocation(currentLocation, locations);
       var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
+
+
+
       this.setState({
         currentLocation : currentLocation,
         lastSeenLocation : currentLocation,
         nextLocation : nextLocation,
         possibleChoices : possibleChoices,
-        cityTiles : this.createCityTiles(nextLocation)
+        cityTiles : this.createCityTiles(nextLocation),
+        history : history //[] //this.state.history.push(travellingFrom)
       })
 
     } else {
@@ -191,12 +142,14 @@ class Game extends React.Component {
       // pass null for the next location so we end up with 3 random possible locations - there is a chance
       // it will have the next location in it, but probably not
       var possibleChoices = this.getPossibleChoices(currentLocation, null, locations, 3);
+
       this.setState({
         currentLocation : currentLocation,
         //lastSeenLocation : currentLocation, // this doesn't change, they're still in the same last seen location
         //nextLocation : nextLocation, // this doesn't change, they're still in a location we haven't gone too
         possibleChoices : possibleChoices,
-        cityTiles : this.createCityTiles(nextLocation)
+        cityTiles : this.createCityTiles(nextLocation),
+        history : history
       })
 
     }
@@ -378,6 +331,12 @@ class Game extends React.Component {
     }
   }
 
+  handleClickBacktrack() {
+    let history = this.state.history;
+    let lastPlace = history.splice(-1);
+    this.travelToLocation(lastPlace, true);
+  }
+
   handleClickTravelTo(name) {
     let travelToThisLocation = this.getLocationByName(name, this.state.locations);
     this.travelToLocation(travelToThisLocation);
@@ -425,6 +384,14 @@ class Game extends React.Component {
 
   render() {
 
+    var history = this.state.history;
+    console.log(history)
+    const historyHtml = history.map((item, index) => {
+      return (
+        <div key={index}>{item.name}</div>
+      );
+    });
+
     var possibleChoices = this.state.possibleChoices;
     const possibleChoicesHtml = possibleChoices.map((choice, index) => {
 
@@ -435,6 +402,8 @@ class Game extends React.Component {
         </li> */
       );
     });
+
+    const backtrackHtml =<div>HI</div>;
 
     var clueClose = this.state.clueDisplayComplete ? <div className="close-clue-display" onClick={() => this.handleClickCloseCloseDisplay()}>X</div> : ""
     var clueDisplay = <div className="clue-display"><span className="clue-talker">{this.state.displayCityTile ? this.state.displayCityTile.talkingTo + ": " : ""}</span><span className="clue-text"></span>{clueClose}</div>;
@@ -453,7 +422,8 @@ class Game extends React.Component {
           <City cityTiles={this.state.cityTiles} handleClickCityTile={(index) => this.handleClickCityTile(index)}/>
           {this.state.displayClue ? clueDisplay : ""}
         </div>
-        <div><div className="possible-choices-heading">Where do you want to go?</div> {possibleChoicesHtml}</div>
+        <div><div className="possible-choices-heading">Where do you want to go?</div> {possibleChoicesHtml} </div>
+        <div>{historyHtml}</div>{backtrackHtml}
       </div>
     );
   }
