@@ -104,3 +104,18 @@ ol, ul {
 .possible-choices-heading {
   margin: .5em 0;
 }
+
+.back-track-info {
+  margin-top: 1em;
+}
+
+.back-track-button {
+  border: 3px orange solid;
+  border-radius: 10px;
+  background-color: white;
+  padding: 0.25em 0.5em;
+  margin: 0.1em 0.25em;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #ff9800;
+}

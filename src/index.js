@@ -57,6 +57,38 @@ class Game extends React.Component {
       },
     ];
 
+    const possibleResponses = {
+      shop : [
+        "This isn't a library .. that answers questions! Buy something!", 
+        "We have a great sale on toilet paper at the moment!",
+        "I don't know, but would you like an ice cream?",
+        "Sorry, but the privacy of my potential customers is of the utmost concern.",
+        "Sorry, my shift has just started, I don't know what's going on.",
+        "K-bars are back, only $1!",
+        "Does this look like an 'ask questions dairy' or a 'buy things dairy'?",
+        "I've got my eye on you,",
+        "When I was growing up I wanted to be an actor.",
+        "I don't even like capitalism.",
+        "Not sure, but I'll sell you 4 loo rolls for the price of 3!",
+        "Just put some pies into the warmer, fresh from freezer if you're interested?",
+        "Hello discerning customer, can I interest you in a pie?",
+      ],
+      citizen : [
+        "You look like a cop. I don't talk to cops.", 
+        "This seems like a 'stranger danger' situation",
+        "Is this for Fair Go or something?",
+        "You look like my buddy Clive, are you related?",
+        "Livin' the dream eh?",
+        "I don't know you!",
+        "G'day!",
+        "You seen a small black and white dog around here anywhere?",
+        "No. Do you want to talk about rugby instead?",
+        "Check with Mikey in the dairy, he knows everything around here.",
+        "Not my business mate.",
+        "Sorry mate, do I look a police surveillance van to you?"
+      ] 
+    }
+
     super(props);
 
     // how many different images of each type do we have?
@@ -67,6 +99,7 @@ class Game extends React.Component {
 
     this.state = {
       locations : locations,
+      possibleResponses: possibleResponses,
       currentLocation : null,
       lastSeenLocation : null,
       nextLocation : null,
@@ -107,7 +140,7 @@ class Game extends React.Component {
     var travellingFrom = this.state.currentLocation;
     let history = this.state.history;
     if(backTracking) {
-      history.pop();
+      // because they're backtracking we don't put the place we were just in into the history collection
     } else {
       history.push(travellingFrom);
     }
@@ -118,8 +151,6 @@ class Game extends React.Component {
       var currentLocation = travelToLocation;
       var nextLocation = this.getNextLocation(currentLocation, locations);
       var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
-
-
 
       this.setState({
         currentLocation : currentLocation,
@@ -259,12 +290,9 @@ class Game extends React.Component {
   // get a response that isn't a clue
   getNonHelpfulResponse(type) {
     let response = "";
-    let possibleResponses = {
-      shop : ["This isn't a library .. that answers questions! Buy something!", "We have a great sale on toilet paper at the moment!"],
-      citizen : ["You look like a cop. I don't talk to cops.", "This seems like a 'stranger danger' situation"] 
-    }
-    var rand = randomIntFromInterval(0, possibleResponses[type].length-1);
-    response = possibleResponses[type][rand];
+
+    var rand = randomIntFromInterval(0, this.state.possibleResponses[type].length-1);
+    response = this.state.possibleResponses[type][rand];
     return response;
   }
 
@@ -333,8 +361,9 @@ class Game extends React.Component {
 
   handleClickBacktrack() {
     let history = this.state.history;
-    let lastPlace = history.splice(-1);
-    this.travelToLocation(lastPlace, true);
+    //let lastPlace = history.splice(-1);
+    let lastPlace = history.splice(history.length-1);
+    this.travelToLocation(lastPlace[0], true);
   }
 
   handleClickTravelTo(name) {
@@ -385,7 +414,7 @@ class Game extends React.Component {
   render() {
 
     var history = this.state.history;
-    console.log(history)
+    var lastPlaceName = this.state.history.length > 0 ? this.state.history[this.state.history.length - 1].name : "";
     const historyHtml = history.map((item, index) => {
       return (
         <div key={index}>{item.name}</div>
@@ -403,7 +432,7 @@ class Game extends React.Component {
       );
     });
 
-    const backtrackHtml =<div>HI</div>;
+    const backtrackHtml = history.length > 0 ? <div className="back-track-info" onClick={() => this.handleClickBacktrack() }>or go back track to where you were previously ... <span className="back-track-button">{lastPlaceName}</span></div> : "";
 
     var clueClose = this.state.clueDisplayComplete ? <div className="close-clue-display" onClick={() => this.handleClickCloseCloseDisplay()}>X</div> : ""
     var clueDisplay = <div className="clue-display"><span className="clue-talker">{this.state.displayCityTile ? this.state.displayCityTile.talkingTo + ": " : ""}</span><span className="clue-text"></span>{clueClose}</div>;
@@ -423,7 +452,8 @@ class Game extends React.Component {
           {this.state.displayClue ? clueDisplay : ""}
         </div>
         <div><div className="possible-choices-heading">Where do you want to go?</div> {possibleChoicesHtml} </div>
-        <div>{historyHtml}</div>{backtrackHtml}
+        {/* <div>{historyHtml}</div> */}
+        {backtrackHtml}
       </div>
     );
   }
