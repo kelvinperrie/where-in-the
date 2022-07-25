@@ -25,38 +25,56 @@ class City extends React.Component {
 
 class Game extends React.Component {
 
-  personImageIndex = 0;
+  personImageIndex = 0; // tracks what person image index we're currently up to, so rather than randomly selecting an image we can iterate through them
 
   constructor(props) {
     
+    /*
+    Possible clue types
+    - giant items (e.g. carrot)
+    - town motto
+    - famous building
+    - close to X
+    - just north/south/east/west of [thing/place]
+    - famous person comes from here
+    - rhymes with 
+    - produces X
+    - famous for
+    */
+
+    // all the possible locations along with the clues for each of them
     const locations = [
       {
-        name : "New Zealand",
-        arrivalCity : "Auckland",
-        clues : [ "They wanted to change their money to dollars", "Keen to visit middle earth", "Something about seeing friends in Wellington" ]
+        name : "Ohakune",
+        clues : [ "They mentioned a big carrot?", "I heard them say something about popping in to visit Mount Ruapehu." ]
       },
       {
-        name : "Australia",
-        arrivalCity : "Sydney",
-        clues : [ "They wanted to change their money to dollars", "Keen to visit the Opera House", "Something about seeing friends in Perth" ]
+        name : "Waitomo",
+        clues : [ "They said they wanted to see glow worms.", "I heard talk of a really big apple." ]
       },
       {
-        name : "England",
-        arrivalCity : "London",
-        clues : [ "They wanted to change their money to pounds", "Keen to visit Big Ben", "Something about seeing friends in York" ]
+        name : "Taihape",
+        clues : [ "They made a joke about wearing a big gumboot. I didn't get it", "I know they were travelling on State Highway 1." ]
       },
       {
-        name : "Scotland",
-        arrivalCity : "Edinburgh",
-        clues : [ "They wanted to change their money to pounds", "Keen to visit the Loch Ness monster", "Something about seeing friends in Glasgow" ]
+        name : "Paeroa",
+        clues : [ "They giggled a lot about getting a photo of a big softdrink, it was weird.", "Pretty sure they were heading to the Hauraki District." ]
       },
       {
-        name : "Egypt",
-        arrivalCity : "Cairo",
-        clues : [ "They wanted to change their money to pounds", "Keen to visit the Nile", "Something about seeing friends in Luxor" ]
+        name : "Hokitika",
+        clues : [ "They wanted to visit a big wheelbarrow - made no sense", "I think they were visiting the largest town in Westland." ]
       },
+      {
+        name : "Mosgiel",
+        clues : [ "They wanted a selfy by the big letters that spell out the name of the town.", "They said they were going to 'The pearl of the plain'.", "They were thinking of also visiting Dunedin, which is close by." ]
+      },
+      {
+        name : "Kaikōura",
+        clues : [ "They said they wanted to get a photo with a big crayfish.", "They hoped to see some whales.", "I over heard them say they were going to be on State Highway 1." ]
+      }
     ];
 
+    // possible non-clue responses that shop keepers or citizens can make
     const possibleResponses = {
       shop : [
         "This isn't a library .. that answers questions! Buy something!", 
@@ -66,7 +84,7 @@ class Game extends React.Component {
         "Sorry, my shift has just started, I don't know what's going on.",
         "K-bars are back, only $1!",
         "Does this look like an 'ask questions dairy' or a 'buy things dairy'?",
-        "I've got my eye on you,",
+        "I've got my eye on you.",
         "When I was growing up I wanted to be an actor.",
         "I don't even like capitalism.",
         "Not sure, but I'll sell you 4 loo rolls for the price of 3!",
@@ -91,47 +109,49 @@ class Game extends React.Component {
 
     super(props);
 
-    // how many different images of each type do we have?
+    // how many different images of each type do we have? this is used to pick random images
     let imageCounts = {
       shop : 4,
       citizen : 7
     };
 
     this.state = {
-      locations : locations,
-      possibleResponses: possibleResponses,
-      currentLocation : null,
-      lastSeenLocation : null,
-      nextLocation : null,
-      possibleChoices : [],
-      cityTiles : [ Array(9).fill(null) ],
+      locations : locations,                // all the potential locations that can be travelled too
+      possibleResponses: possibleResponses, // all the potential non-clue responses that can be made
+      currentLocation : null,               // where the user currently is located
+      lastSeenLocation : null,              // where we last saw some clues
+      nextLocation : null,                  // the location the user is tring to find
+      possibleChoices : [],                 // a collection of locations that can currently be travelled to; changes every turn
+      cityTiles : [ Array(9).fill(null) ],  // a collection of objects that describe the current city details - always 9 of them
       displayCityTile : null,               // the city tile that the user has clicked on, wanting to get a clue
       displayClue : false,                  // a flag indicating if the dialog is open showing a clue
       displayedClue : "",                   // the text of the clue to display
       imageCounts : imageCounts,            // an object that tells us how many items there are in each type of image/city tile
-      history : []
+      history : []                          // tracks where we've been so that we can go back
     }
-
-
-    // todo this should be in componentDidMount?
-    var currentLocation = this.getLocationByName("Scotland", locations);
-    var nextLocation = this.getNextLocation(currentLocation, locations);
-    var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
-    this.state.currentLocation = currentLocation;
-    this.state.lastSeenLocation = currentLocation;
-    this.state.nextLocation = nextLocation;
-    this.state.possibleChoices = possibleChoices;
     
   }
 
   componentDidMount() {
-    // setup the image index for our people - this pics where we will randomly start getting
+    // setup the image index for our people - this indicates where we will start getting
     // our citizen images from the array
     let imageCount = this.state.imageCounts["citizen"];
     this.personImageIndex = randomIntFromInterval(1, imageCount);
 
-    var nextLocation = this.state.nextLocation;
-    this.setState( { cityTiles : this.createCityTiles(nextLocation) });
+    let locations = this.state.locations;
+
+    var currentLocation = this.getRandomLocation(locations);
+    var nextLocation = this.getNextLocation(currentLocation, locations);
+    var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
+
+    this.setState( 
+      { 
+        cityTiles : this.createCityTiles(nextLocation),
+        currentLocation : currentLocation,
+        lastSeenLocation : currentLocation,
+        nextLocation : nextLocation,
+        possibleChoices : possibleChoices
+      });
   }
 
   travelToLocation(travelToLocation, backTracking) {
@@ -164,15 +184,19 @@ class Game extends React.Component {
     } else {
       // they are not moving to the correct place ...
       var currentLocation = travelToLocation;
-      // however, they might have moved to the last known place, in which case we want to setup the clues again
+      // however, they might have moved to the last known place, in which case we want to setup the clues again and
+      // ensure that the location they are meant to go to is one of the possible choices
       let nextLocation = null;
+      var possibleChoices = [];
       if(currentLocation.name === this.state.lastSeenLocation.name) {
         nextLocation = this.state.nextLocation;
+        // next location has to be in the possible choices
+        possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
+      } else {
+        // pass null for the next location so we end up with 3 random possible locations - there is a chance
+        // it will have the next location in it, but probably not
+        possibleChoices = this.getPossibleChoices(currentLocation, null, locations, 3);
       }
-      //var nextLocation = this.getNextLocation(currentLocation, locations);
-      // pass null for the next location so we end up with 3 random possible locations - there is a chance
-      // it will have the next location in it, but probably not
-      var possibleChoices = this.getPossibleChoices(currentLocation, null, locations, 3);
 
       this.setState({
         currentLocation : currentLocation,
@@ -287,19 +311,23 @@ class Game extends React.Component {
     return cityTiles;
   }
 
-  // get a response that isn't a clue
+  // get a random response that isn't a clue
   getNonHelpfulResponse(type) {
     let response = "";
-
     var rand = randomIntFromInterval(0, this.state.possibleResponses[type].length-1);
     response = this.state.possibleResponses[type][rand];
     return response;
   }
 
+  // get a random location - used to get a starting location
+  getRandomLocation(locations) {
+    var rand = randomIntFromInterval(0, locations.length-1);
+    return locations[rand];
+  }
+
   // get a location by name from a collection of locations
   getLocationByName(name, locations) {
     for(let i = 0; i < locations.length; i++) {
-      console.log(locations[i])
       if(locations[i].name === name) {
         return locations[i];
       }
@@ -392,7 +420,6 @@ class Game extends React.Component {
         displayClue : true
       })
     }
-    console.log("clicked on " + index)
   }
 
   // frankly, async state is bullshit, so we're not going to use it
@@ -426,9 +453,6 @@ class Game extends React.Component {
 
       return (
         <div className="possible-choice" key={index} onClick={ () => this.handleClickTravelTo(choice.name) }>{choice.name}</div>
-        /* <li key={index}>
-          <button className="possible-choice" onClick={ () => this.handleClickTravelTo(choice.name) }>{choice.name}</button>
-        </li> */
       );
     });
 
@@ -442,11 +466,10 @@ class Game extends React.Component {
       <div className="game">
         <div className="location-info">
           <div className="location">Welcome to <div className="current-location">{ this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div></div>
-          <div className="location">Last Seen:    { this.state.lastSeenLocation ? this.state.lastSeenLocation.name + "!" : "unknown" }</div>
+          {/* <div className="location">Last Seen:    { this.state.lastSeenLocation ? this.state.lastSeenLocation.name + "!" : "unknown" }</div>
           <div className="location">Next:    { this.state.nextLocation ? this.state.nextLocation.name + "!" : "unknown" }</div>
-          
+           */}
         </div>
-        <br/>
         <div className="game-board" key="sdf112sdf">
           <City cityTiles={this.state.cityTiles} handleClickCityTile={(index) => this.handleClickCityTile(index)}/>
           {this.state.displayClue ? clueDisplay : ""}
