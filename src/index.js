@@ -45,6 +45,38 @@ class Game extends React.Component {
     // all the possible locations along with the clues for each of them
     const locations = [
       {
+        name : "Arrowtown",
+        clues : [ "They wanted to see all the buildings from the gold rush days", "I heard them say something about checking out the Arrow river.","I think Queenstown was nearby." ]
+      },
+      {
+        name : "Ashurst",
+        clues : [ "I heard it was at one end of the Manawatu Gorge.", "They said something about getting a good view of a wind farm.","I think it was super close to Palmerston North." ]
+      },
+      {
+        name : "Balclutha",
+        clues : [ "I heard they were heading too the largest town in South Otago.", "They said something about going halfway between Dunedin and Gore.","Apparently it's a Scottish name, the English translation is 'Town on the Clyde'." ]
+      },
+      {
+        name : "Bluff",
+        clues : [ "I heard they were heading too southern most town of mainland NZ.", "They said the place they were going was a long time ago called Campbelltown.","They had wanted to see the paua house and were sad that it's no longer there." ]
+      },
+      {
+        name : "Bulls",
+        clues : [ "Sounds like the place she is going likes to make puns with the name of the town.", "They said it was where state highway 1 and 3 meet.","I overheard them say there was an airforce base close buy to where they were going." ]
+      },
+      {
+        name : "Christchurch",
+        clues : [ "They were heading to the second largest city in NZ.", "They said they wanted to check out the Avon river.","I think they mentioned visiting Cathedral Square." ]
+      },
+      {
+        name : "Coromandel",
+        clues : [ "Where they're heading use to be a big port for the gold mining and Kauri industry.", "They said they the name of the town is the same as the name of the district, and the peninsula it is on.","I heard them say something about visiting a mussel farm." ]
+      },
+      {
+        name : "Dunedin",
+        clues : [ "They said that during the gold rush this was the biggest urban area in NZ.", "The place they're heading too has a nickname of 'Edinburgh of the South'.","They mentioned they were keen to see Larnach Castle.", "I heard them say they wanted to visit the Octagon." ]
+      },
+      {
         name : "Ohakune",
         clues : [ "They mentioned a big carrot?", "I heard them say something about popping in to visit Mount Ruapehu." ]
       },
@@ -182,6 +214,10 @@ class Game extends React.Component {
       })
 
     } else {
+
+      // TODO - if they are travelling back then we should never get to a point of getting 3 random locations
+
+
       // they are not moving to the correct place ...
       var currentLocation = travelToLocation;
       // however, they might have moved to the last known place, in which case we want to setup the clues again and
