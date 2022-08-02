@@ -87,18 +87,19 @@ ol, ul {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  gap: 0.25em;
 }
 .possible-choice {
   text-align: center;
   border: 3px orange solid;
   border-radius: 10px;
   background-color: white;
-  padding: 0.25em;
-  margin: 0.1em 0.25em;
+  padding: 0.25em 0;
+  /* margin: 0.1em 0.25em; */
   font-size: 1.5em;
   cursor: pointer;
   color: #ff9800;
-  width: 25%;
+  width: 30%;
   user-select: none;
 }
 @media (max-width: 800px) {
