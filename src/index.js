@@ -501,7 +501,7 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="location-info">
-          <div className="location">Welcome to <div className="current-location">{ this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div></div>
+          <div className="location"><span className="location-title">Welcome to </span><div className="current-location">{ this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div></div>
           {/* <div className="location">Last Seen:    { this.state.lastSeenLocation ? this.state.lastSeenLocation.name + "!" : "unknown" }</div>
           <div className="location">Next:    { this.state.nextLocation ? this.state.nextLocation.name + "!" : "unknown" }</div>
            */}
@@ -510,7 +510,7 @@ class Game extends React.Component {
           <City cityTiles={this.state.cityTiles} handleClickCityTile={(index) => this.handleClickCityTile(index)}/>
           {this.state.displayClue ? clueDisplay : ""}
         </div>
-        <div><div className="possible-choices-heading">Where do you want to go?</div> {possibleChoicesHtml} </div>
+        <div><div className="possible-choices-heading">Where do you want to go?</div> <div className="possible-choice-container">{possibleChoicesHtml} </div></div>
         {/* <div>{historyHtml}</div> */}
         {backtrackHtml}
       </div>
