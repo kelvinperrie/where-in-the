@@ -419,9 +419,9 @@ class Game extends React.Component {
   // just look at his name. glorious.
   handleClickCloseCloseDisplay() {
     // can't close a dialog until it has finshed being displayed
-    if(this.state.clueDisplayComplete) {
+    //if(this.state.clueDisplayComplete) {
       this.setState({ displayClue : false });
-    }
+    //}
   }
 
   handleClickCloseIntro() {
@@ -474,6 +474,13 @@ class Game extends React.Component {
 
   // frankly, async state is bullshit, so we're not going to use it
   doClueTyping(clueToDisplay, doneSoFar, target) {
+    if(doneSoFar.length > 1) {
+      // the state is never updated on the first run through, so we only do this check after the first time
+      // if the clue dialog has been closed then we want to stop doing this typing
+      if(!this.state.displayClue) {
+        return;
+      }
+    }
     let nextCharIndex = doneSoFar.length;
     if(nextCharIndex == clueToDisplay.length) {
       this.setState({ clueDisplayComplete : true })
@@ -530,7 +537,7 @@ class Game extends React.Component {
 
     const backtrackHtml = history.length > 0 ? <div className="back-track-info" onClick={() => this.handleClickBacktrack() }>or go back track to where you were previously ... <span className="back-track-button">{lastPlaceName}</span></div> : "";
 
-    var clueClose = this.state.clueDisplayComplete ? <div className="close-clue-display" onClick={() => this.handleClickCloseCloseDisplay()}>X</div> : ""
+    var clueClose = this.state.clueDisplayComplete || true ? <div className="close-clue-display" onClick={() => this.handleClickCloseCloseDisplay()}>X</div> : ""
     var clueDisplay = <div className="clue-display"><span className="clue-talker">{this.state.displayCityTile ? this.state.displayCityTile.talkingTo + ": " : ""}</span><span className="clue-text"></span>{clueClose}</div>;
 
 
