@@ -13,12 +13,34 @@ ol, ul {
   margin: auto;
   background-color: #f7bb64;
   padding: 1em;
+  position: relative;
 }
 
 .game-board {
   max-width: 600px;
   position: relative;
   background-color: #a6fdb3;
+}
+
+.introduction {
+  font-size: 1em;
+  position: absolute;
+  top: 150px;
+  background-color: #fff;
+  border: 4px solid #ff9800;
+  border-radius: 15px;
+  padding: 1em;
+  width: 70%;
+  left: 50%;
+  transform: translateX( -50% );
+  margin-top: 2em;
+  z-index: 100;
+}
+.intro-title {
+  font-size: 1.5em;
+  display: block;
+  margin-bottom: 0.5em;
+  color: #ff9800;
 }
 
 .city-tile {
@@ -33,7 +55,7 @@ ol, ul {
 .clue-display {
   font-size: 1.25em;
   position: absolute;
-  top: 150px;
+  top: 100px;
   background-color: #fff;
   border: 4px solid #ff9800;
   border-radius: 15px;
@@ -43,7 +65,7 @@ ol, ul {
   transform: translateX( -50% );
   margin-top: 2em;
 }
-.close-clue-display {
+.close-clue-display, .close-intro {
   position: absolute;
   right: 0.2em;
   top: -1.75em;
@@ -53,20 +75,22 @@ ol, ul {
   border-radius: 20px;
   cursor: pointer;
 }
-.close-clue-display:hover {
+.close-clue-display:hover, .close-intro:hover {
   background-color: #ffd6d6;
 }
 
 .clue-text { 
-  display: inline-block;
+  /* display: inline-block;
   width: 62%;
-  vertical-align: top;
+  vertical-align: top; */
 }
 .clue-talker {
-  display: inline-block;
-  width: 34%;
+  display: block;
+  color: #ff9800;
+  margin-bottom: 0.25em;
+  /* width: 34%;
   text-align: right;
-  padding-right: 0.5em;
+  padding-right: 0.5em; */
 }
 
 .location-title {
@@ -116,6 +140,7 @@ ol, ul {
 
 .back-track-info {
   margin-top: 1em;
+  line-height: 2em; /* so when the line wraps the button doesn't go over the text*/
 }
 
 .back-track-button {

@@ -159,7 +159,8 @@ class Game extends React.Component {
       displayClue : false,                  // a flag indicating if the dialog is open showing a clue
       displayedClue : "",                   // the text of the clue to display
       imageCounts : imageCounts,            // an object that tells us how many items there are in each type of image/city tile
-      history : []                          // tracks where we've been so that we can go back
+      history : [],                         // tracks where we've been so that we can go back
+      showIntroduction : true,              // flag controlling whether the intro screen is shown
     }
     
   }
@@ -423,7 +424,14 @@ class Game extends React.Component {
     }
   }
 
+  handleClickCloseIntro() {
+    this.setState({ showIntroduction : false });
+  }
+
   handleClickBacktrack() {
+    // don't allow if the clue is still open
+    if(this.state.displayClue) return;
+
     let history = this.state.history;
     //let lastPlace = history.splice(-1);
     let lastPlace = history.splice(history.length-1);
@@ -431,11 +439,17 @@ class Game extends React.Component {
   }
 
   handleClickTravelTo(name) {
+    // if the intro or the clues are open then cancel this
+    if(this.state.showIntroduction) return;
+    if(this.state.displayClue) return;
+
     let travelToThisLocation = this.getLocationByName(name, this.state.locations);
     this.travelToLocation(travelToThisLocation);
   }
 
   handleClickCityTile(index) {
+    // don't allow if intro still open
+    if(this.state.showIntroduction) return;
     // can't click a tile if the dialog is already open. We're not animals. We live in a society. There are rules.
     if(this.state.displayClue) {
       return;
@@ -473,6 +487,28 @@ class Game extends React.Component {
     setTimeout(() => { this.doClueTyping(clueToDisplay, doneSoFar, target); }, timeDelay);
   }
 
+  outputIntro() {
+    if(!this.state.showIntroduction) {
+      return null;
+    }
+    var introClose = <div className="close-intro" onClick={() => this.handleClickCloseIntro()}>X</div>
+
+    return (
+      <div className="introduction">
+        <span className="introduction-text">
+        <span className="intro-title">Where in NZ is Charlie Singh?</span>
+        Your friend Charlie is somewhere in New Zealand and it's your job to find them. 
+        <br/><br/>
+        Explore where you are by clicking a shop or person to find clues to where Charlie has gone. 
+        Some people might give you useful information, others ... not so much. 
+        Once you think you know where they've gone, click the buttons at the bottom to travel to the new location. 
+        If you get it wrong you can always click the button right at the bottom to travel back to your last location!</span>
+        <br/><br/>
+        Click the X in the top corner to close this introduction!
+        {introClose}
+      </div>
+    );
+  }
 
   render() {
 
@@ -498,10 +534,12 @@ class Game extends React.Component {
     var clueDisplay = <div className="clue-display"><span className="clue-talker">{this.state.displayCityTile ? this.state.displayCityTile.talkingTo + ": " : ""}</span><span className="clue-text"></span>{clueClose}</div>;
 
 
+
     return (
       <div className="game">
+        {this.outputIntro()}
         <div className="location-info">
-          <div className="location"><span className="location-title">Welcome to </span><div className="current-location">{ this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div></div>
+          <div className="location"><span className="location-title">You are currently in </span><div className="current-location">{ this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div></div>
           {/* <div className="location">Last Seen:    { this.state.lastSeenLocation ? this.state.lastSeenLocation.name + "!" : "unknown" }</div>
           <div className="location">Next:    { this.state.nextLocation ? this.state.nextLocation.name + "!" : "unknown" }</div>
            */}
