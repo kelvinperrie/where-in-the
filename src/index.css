@@ -79,11 +79,11 @@ ol, ul {
   background-color: #ffd6d6;
 }
 
-.clue-text { 
-  /* display: inline-block;
+/* .clue-text { 
+  display: inline-block;
   width: 62%;
-  vertical-align: top; */
-}
+  vertical-align: top;
+} */
 .clue-talker {
   display: block;
   color: #ff9800;
