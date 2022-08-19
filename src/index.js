@@ -147,8 +147,16 @@ class Game extends React.Component {
       citizen : 7
     };
 
+    // an object to track how the player is doing
+    let stats = {
+      totalRightCount : 0,
+      totalWrongCount : 0,
+      currentRightStreak : 0
+    }
+
     this.state = {
       locations : locations,                // all the potential locations that can be travelled too
+      stats: stats,                         // records the players progression
       possibleResponses: possibleResponses, // all the potential non-clue responses that can be made
       currentLocation : null,               // where the user currently is located
       lastSeenLocation : null,              // where we last saw some clues
@@ -161,6 +169,7 @@ class Game extends React.Component {
       imageCounts : imageCounts,            // an object that tells us how many items there are in each type of image/city tile
       history : [],                         // tracks where we've been so that we can go back
       showIntroduction : true,              // flag controlling whether the intro screen is shown
+      showCompletion : false,               // flag controlling whether the completion screen is shown
     }
     
   }
@@ -187,6 +196,14 @@ class Game extends React.Component {
       });
   }
 
+  checkForCompletion(currentRight) {
+    // heck if I know
+    console.log("checking for completion where currentRight is " + currentRight)
+    if(currentRight == 5) {
+      this.setState({ showCompletion : true });
+    }
+  }
+
   travelToLocation(travelToLocation, backTracking) {
     // if we're backtracking then we don't want to add to our history ... we want to remove from it
 
@@ -205,14 +222,23 @@ class Game extends React.Component {
       var nextLocation = this.getNextLocation(currentLocation, locations);
       var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
 
+      let currentRight = this.state.stats.currentRightStreak+1;
+
       this.setState({
         currentLocation : currentLocation,
         lastSeenLocation : currentLocation,
         nextLocation : nextLocation,
         possibleChoices : possibleChoices,
         cityTiles : this.createCityTiles(nextLocation),
-        history : history //[] //this.state.history.push(travellingFrom)
-      })
+        history : history,
+        stats : { 
+          currentRightStreak : currentRight, 
+          totalRightCount : this.state.stats.totalRightCount+1,
+          totalWrongCount : this.state.stats.totalWrongCount
+         }
+      });
+
+      this.checkForCompletion(currentRight);
 
     } else {
 
@@ -235,14 +261,22 @@ class Game extends React.Component {
         possibleChoices = this.getPossibleChoices(currentLocation, null, locations, 3);
       }
 
+      // if they're backtracking don't make that count as a wrong move ... but it's also not a right one
+      let totalWrong = backTracking ? this.state.stats.totalWrongCount : this.state.stats.totalWrongCount + 1;
+
       this.setState({
         currentLocation : currentLocation,
         //lastSeenLocation : currentLocation, // this doesn't change, they're still in the same last seen location
         //nextLocation : nextLocation, // this doesn't change, they're still in a location we haven't gone too
         possibleChoices : possibleChoices,
         cityTiles : this.createCityTiles(nextLocation),
-        history : history
-      })
+        history : history,
+        stats : { 
+          currentRightStreak : 0, 
+          totalRightCount : this.state.stats.totalRightCount,
+          totalWrongCount : totalWrong 
+        }
+      });
 
     }
   }
@@ -439,9 +473,12 @@ class Game extends React.Component {
   }
 
   handleClickTravelTo(name) {
-    // if the intro or the clues are open then cancel this
+    // if the intro is open then cancel this
     if(this.state.showIntroduction) return;
-    if(this.state.displayClue) return;
+    // if the clue is open then close it
+    if(this.state.displayClue) {
+      this.setState({ displayClue : false });
+    };
 
     let travelToThisLocation = this.getLocationByName(name, this.state.locations);
     this.travelToLocation(travelToThisLocation);
@@ -494,6 +531,27 @@ class Game extends React.Component {
     setTimeout(() => { this.doClueTyping(clueToDisplay, doneSoFar, target); }, timeDelay);
   }
 
+  outputFinish() {
+    if(!this.state.showCompletion) {
+      return null;
+    }
+
+    return (
+      <div className="completed">
+        <span className="completed-text">
+          <span className="completed-title">Nice job, you found Charlie Singh!</span>
+          Wow you did it, go you!
+          <br/><br/>
+          This is how you did:<br/>
+          Total right: <span className="stats-value">{this.state.stats.totalRightCount}</span><br/>
+          Total wrong: <span className="stats-value">{this.state.stats.totalWrongCount}</span><br/>
+          <br/><br/>
+          Refresh the page to play again :)
+        </span>
+      </div>
+    );
+  }
+
   outputIntro() {
     if(!this.state.showIntroduction) {
       return null;
@@ -503,15 +561,18 @@ class Game extends React.Component {
     return (
       <div className="introduction">
         <span className="introduction-text">
-        <span className="intro-title">Where in NZ is Charlie Singh?</span>
-        Your friend Charlie is somewhere in New Zealand and it's your job to find them. 
-        <br/><br/>
-        Explore where you are by clicking a shop or person to find clues to where Charlie has gone. 
-        Some people might give you useful information, others ... not so much. 
-        Once you think you know where they've gone, click the buttons at the bottom to travel to the new location. 
-        If you get it wrong you can always click the button right at the bottom to travel back to your last location!</span>
-        <br/><br/>
-        Click the X in the top corner to close this introduction!
+          <span className="intro-title">Where in NZ is Charlie Singh?</span>
+          Your friend Charlie is somewhere in New Zealand and it's your job to find them. 
+          <br/><br/>
+          Explore where you are by clicking a shop or person to find clues to where Charlie has gone. 
+          Some people might give you useful information, others ... not so much. 
+          Once you think you know where they've gone, click the buttons at the bottom to travel to the new location. 
+          If you get it wrong you can always click the button right at the bottom to travel back to your last location.
+          <br/><br/>
+          You'll have to get a few right in a row to catch up to Charlie, good luck!
+          <br/><br/>
+          When you're ready Click the X in the top corner to close this introduction.
+        </span>
         {introClose}
       </div>
     );
@@ -545,6 +606,7 @@ class Game extends React.Component {
     return (
       <div className="game">
         {this.outputIntro()}
+        {this.outputFinish()}
         <div className="location-info">
           <div className="location"><span className="location-title">You are currently in </span><div className="current-location">{ this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div></div>
           {/* <div className="location">Last Seen:    { this.state.lastSeenLocation ? this.state.lastSeenLocation.name + "!" : "unknown" }</div>
@@ -558,6 +620,9 @@ class Game extends React.Component {
         <div><div className="possible-choices-heading">Where do you want to go?</div> <div className="possible-choice-container">{possibleChoicesHtml} </div></div>
         {/* <div>{historyHtml}</div> */}
         {backtrackHtml}
+        <div>so far got this many in a row: { this.state.stats.currentRightStreak }</div>
+        <div>totalRightCount: { this.state.stats.totalRightCount }</div>
+        <div>totalWrongCount: { this.state.stats.totalWrongCount }</div>
       </div>
     );
   }

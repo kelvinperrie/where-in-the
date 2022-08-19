@@ -22,7 +22,7 @@ ol, ul {
   background-color: #a6fdb3;
 }
 
-.introduction {
+.introduction, .completed {
   font-size: 1em;
   position: absolute;
   top: 150px;
@@ -36,10 +36,15 @@ ol, ul {
   margin-top: 2em;
   z-index: 100;
 }
-.intro-title {
+.intro-title, .completed-title {
   font-size: 1.5em;
   display: block;
   margin-bottom: 0.5em;
+  color: #ff9800;
+}
+
+.stats-value {
+  font-size: 1.5em;
   color: #ff9800;
 }
 
