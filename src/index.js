@@ -58,7 +58,7 @@ class Game extends React.Component {
       },
       {
         name : "Bluff",
-        clues : [ "I heard they were heading too southern most town of mainland NZ.", "They said the place they were going was a long time ago called Campbelltown.","They had wanted to see the paua house and were sad that it's no longer there." ]
+        clues : [ "I heard they were heading to the southern most town of mainland NZ.", "They said the place they were going was a long time ago called Campbelltown.","They had wanted to see the paua house and were sad that it's no longer there." ]
       },
       {
         name : "Bulls",
@@ -184,7 +184,9 @@ class Game extends React.Component {
 
     var currentLocation = this.getRandomLocation(locations);
     var nextLocation = this.getNextLocation(currentLocation, locations);
-    var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
+    let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(0);
+
+    var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, possibleChoiceCount-1);
 
     this.setState( 
       { 
@@ -196,11 +198,25 @@ class Game extends React.Component {
       });
   }
 
+  // see if the game is over
   checkForCompletion(currentRight) {
-    // heck if I know
-    console.log("checking for completion where currentRight is " + currentRight)
-    if(currentRight == 5) {
+    // if you get 6 right in a row then you're a winner
+    if(currentRight == 8) {
       this.setState({ showCompletion : true });
+    }
+  }
+
+  // this determines how many buttons of possible locations to travel to should be shown
+  // the better the player is doing the more buttons show / which makes it harder
+  decideHowManyPossibleChoicesToShow(currentRightStreak) {
+    if(currentRightStreak > 6) {
+      return 6;
+    } else if(currentRightStreak > 4) {
+      return 5;
+    } else if (currentRightStreak > 2) {
+      return 4;
+    } else {
+      return 3;
     }
   }
 
@@ -218,11 +234,14 @@ class Game extends React.Component {
     let locations = this.state.locations;
     if(travelToLocation.name === this.state.nextLocation.name) {
       // they are moving to the correct place :)
+      
+      let currentRight = this.state.stats.currentRightStreak+1;
+      let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(currentRight);
+
       var currentLocation = travelToLocation;
       var nextLocation = this.getNextLocation(currentLocation, locations);
-      var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
+      var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, possibleChoiceCount - 1);
 
-      let currentRight = this.state.stats.currentRightStreak+1;
 
       this.setState({
         currentLocation : currentLocation,
@@ -251,14 +270,15 @@ class Game extends React.Component {
       // ensure that the location they are meant to go to is one of the possible choices
       let nextLocation = null;
       var possibleChoices = [];
+      let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(0);
       if(currentLocation.name === this.state.lastSeenLocation.name) {
         nextLocation = this.state.nextLocation;
         // next location has to be in the possible choices
-        possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, 2);
+        possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, possibleChoiceCount-1);
       } else {
         // pass null for the next location so we end up with 3 random possible locations - there is a chance
         // it will have the next location in it, but probably not
-        possibleChoices = this.getPossibleChoices(currentLocation, null, locations, 3);
+        possibleChoices = this.getPossibleChoices(currentLocation, null, locations, possibleChoiceCount);
       }
 
       // if they're backtracking don't make that count as a wrong move ... but it's also not a right one
@@ -422,7 +442,7 @@ class Game extends React.Component {
     currentLocation : where we currently are - cannot be in the returned list
     nextLocation    : where we should be going to next - needs to be in the returned list
     locations       : the collection of possible locations
-    choiceCount     : how many possible locations we need to return
+    choiceCount     : how many possible locations we need to return - if you want 3 locations total then this should be two (because the nextLocation + 2 would be 3)
   */
   getPossibleChoices(currentLocation, nextLocation, locations, choiceCount) {
     var possibleChoices = [];
