@@ -144,7 +144,7 @@ class Game extends React.Component {
     // how many different images of each type do we have? this is used to pick random images
     let imageCounts = {
       shop : 4,
-      citizen : 7
+      citizen : 3
     };
 
     // an object to track how the player is doing
