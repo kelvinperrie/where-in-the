@@ -62,7 +62,7 @@ class Game extends React.Component {
       },
       {
         name : "Bulls",
-        clues : [ "Sounds like the place she is going likes to make puns with the name of the town.", "They said it was where state highway 1 and 3 meet.","I overheard them say there was an airforce base close buy to where they were going." ]
+        clues : [ "Sounds like the place she is going likes to make puns with the name of the town.", "They said it was where state highway 1 and 3 meet.","I overheard them say there was an airforce base close by to where they were going." ]
       },
       {
         name : "Christchurch",
