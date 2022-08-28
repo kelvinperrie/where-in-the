@@ -510,7 +510,7 @@ class Game extends React.Component {
     // can't click a tile if the dialog is already open. We're not animals. We live in a society. There are rules.
     // close the currently opened clue
     if(this.state.displayClue) {
-      handleClickCloseCloseDisplay(); // this function just has the best name. I can't beat this.
+      this.handleClickCloseCloseDisplay(); // this function just has the best name. I can't beat this.
       return;
     }
     let clickedCityTileData = this.state.cityTiles[index];
