@@ -77,32 +77,68 @@ class Game extends React.Component {
         clues : [ "They said that during the gold rush this was the biggest urban area in NZ.", "The place they're heading too has a nickname of 'Edinburgh of the South'.","They mentioned they were keen to see Larnach Castle.", "I heard them say they wanted to visit the Octagon." ]
       },
       {
-        name : "Ohakune",
-        clues : [ "They mentioned a big carrot?", "I heard them say something about popping in to visit Mount Ruapehu." ]
+        name : "Gisborne",
+        clues : [ "They said something about wishing they could go to the Rhythm & Vines music festival.", "They said they're going to visit Kati beach where James Cook made his first landing in New Zealand.","They said that where they're heading is sometimes called the City of Rivers." ]
       },
       {
-        name : "Waitomo",
-        clues : [ "They said they wanted to see glow worms.", "I heard talk of a really big apple." ]
+        name : "Greymouth",
+        clues : [ "They mentioned they were heading to the largest town in the West Coast region.", "They were hoping the weather was clear so they would get a view of Aoraki (Mount Cook).", "Apparently where they were heading is at the mouth of the Grey river." ]
       },
       {
-        name : "Taihape",
-        clues : [ "They made a joke about wearing a big gumboot. I didn't get it", "I know they were travelling on State Highway 1." ]
+        name : "Hamilton",
+        clues : [ "They wanted to visit the longest river in New Zealand.", "They said something about the place being the largest city in the Waikato.", "Apparently the Maori name of where they're going is Kirikirioa.", "They said they were going to 'The Tron', which must be a nick name?" ]
       },
       {
-        name : "Paeroa",
-        clues : [ "They giggled a lot about getting a photo of a big softdrink, it was weird.", "Pretty sure they were heading to the Hauraki District." ]
+        name : "Hastings",
+        clues : [ "They said they were heading to one of the Bay Cities.", "Apparently where they're going is sometimes called the fruit bowl of New Zealand.", "I think they were heading to an inland place." ]
       },
       {
         name : "Hokitika",
-        clues : [ "They wanted to visit a big wheelbarrow - made no sense", "I think they were visiting the largest town in Westland." ]
+        clues : [ "They wanted to visit a big wheelbarrow - made no sense.", "I think they were visiting the largest town in Westland." ]
+      },
+      {
+        name : "Huntly",
+        clues : [ "They mentioned they were going to visit an old DEKA sign.", "I know they were heading somewhere you can see an old power station with two giant chimneys.", "Apparently the area they're going to has a long history of coal mining." ]
+      },
+      {
+        name : "Invercargill",
+        clues : [ "They said they're heading to the westernmost and southernmost city in New Zealand.", "Many of the street names where they're going are named after rivers in Scotland.", "I heard the place they're heading to has been called The City of Water and Light." ]
+      },
+      {
+        name : "Kaikōura",
+        clues : [ "They said they wanted to get a photo with a big crayfish.", "They hoped to see some whales.", "I over heard them say they were going to be on State Highway 1." ]
+      },
+      {
+        name : "Kawakawa",
+        clues : [ "They said the place they're going was named after a shrub.", "They said they're heading to a place where trains can go down the main street and it's known as Train Town.", "They said there is a famout public toilet where they're going, designed by a famous Austrian artist." ]
+      },
+      {
+        name : "KeriKeri",
+        clues : [ "They mentioned they were going to the largest town in Northland.", "Where they're going has sometimes been called the Cradle of the Nation because it was where the first mission station was built.", "The local slogan for where they're going is 'It's So Nice They Named It Twice'" ]
+      },
+      {
+        name : "Masterton",
+        clues : [ "They mentioned they were going to see Queen Elizabeth park and maybe ride on the miniture railway.", "They said they hoped to one day see the Golden Shears sheep shearing competition.", "I heard they were heading to the largest town in the Wairapap region." ]
       },
       {
         name : "Mosgiel",
         clues : [ "They wanted a selfy by the big letters that spell out the name of the town.", "They said they were going to 'The pearl of the plain'.", "They were thinking of also visiting Dunedin, which is close by." ]
       },
       {
-        name : "Kaikōura",
-        clues : [ "They said they wanted to get a photo with a big crayfish.", "They hoped to see some whales.", "I over heard them say they were going to be on State Highway 1." ]
+        name : "Ohakune",
+        clues : [ "They mentioned a big carrot?", "I heard them say something about popping in to visit Mount Ruapehu." ]
+      },
+      {
+        name : "Paeroa",
+        clues : [ "They giggled a lot about getting a photo of a big softdrink, it was weird.", "Pretty sure they were heading to the Hauraki District." ]
+      },
+      {
+        name : "Taihape",
+        clues : [ "They made a joke about wearing a big gumboot. I didn't get it", "I know they were travelling on State Highway 1." ]
+      },
+      {
+        name : "Waitomo",
+        clues : [ "They said they wanted to see glow worms.", "I heard talk of a really big apple." ]
       }
     ];
 
@@ -144,7 +180,7 @@ class Game extends React.Component {
     // how many different images of each type do we have? this is used to pick random images
     let imageCounts = {
       shop : 4,
-      citizen : 3
+      citizen : 5
     };
 
     // an object to track how the player is doing
