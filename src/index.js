@@ -113,12 +113,12 @@ class Game extends React.Component {
         clues : [ "They said the place they're going was named after a shrub.", "They said they're heading to a place where trains can go down the main street and it's known as Train Town.", "They said there is a famout public toilet where they're going, designed by a famous Austrian artist." ]
       },
       {
-        name : "KeriKeri",
+        name : "Kerikeri",
         clues : [ "They mentioned they were going to the largest town in Northland.", "Where they're going has sometimes been called the Cradle of the Nation because it was where the first mission station was built.", "The local slogan for where they're going is 'It's So Nice They Named It Twice'" ]
       },
       {
         name : "Masterton",
-        clues : [ "They mentioned they were going to see Queen Elizabeth park and maybe ride on the miniture railway.", "They said they hoped to one day see the Golden Shears sheep shearing competition.", "I heard they were heading to the largest town in the Wairapap region." ]
+        clues : [ "They mentioned they were going to see Queen Elizabeth park and maybe ride on the miniture railway.", "They said they hoped to one day see the Golden Shears sheep shearing competition.", "I heard they were heading to the largest town in the Wairapa region." ]
       },
       {
         name : "Mosgiel",
