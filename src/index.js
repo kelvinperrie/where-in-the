@@ -231,7 +231,7 @@ class Game extends React.Component {
       displayClue : false,                  // a flag indicating if the dialog is open showing a clue
       displayedClue : "",                   // the text of the clue to display
       imageCounts : imageCounts,            // an object that tells us how many items there are in each type of image/city tile
-      history : [],                         // tracks where we've been so that we can go back
+      locationHistory : [],                 // tracks where we've been so that we can go back
       showIntroduction : true,              // flag controlling whether the intro screen is shown
       showCompletion : false,               // flag controlling whether the completion screen is shown
     }
@@ -260,11 +260,13 @@ class Game extends React.Component {
         nextLocation : nextLocation,
         possibleChoices : possibleChoices
       });
+      this.createHistoryFromCurrent(currentLocation, currentLocation, nextLocation, possibleChoices);
+
   }
 
   // see if the game is over
   checkForCompletion(currentRight) {
-    // if you get 6 right in a row then you're a winner
+    // if you get a certain amount right in a row then you're a winner
     if(currentRight == 8) {
       this.setState({ showCompletion : true });
     }
@@ -284,16 +286,42 @@ class Game extends React.Component {
     }
   }
 
-  travelToLocation(travelToLocation, backTracking) {
-    // if we're backtracking then we don't want to add to our history ... we want to remove from it
+  createHistoryFromCurrent(currentLocation, lastSeenLocation, nextLocation, possibleChoices) {
 
-    var travellingFrom = this.state.currentLocation;
-    let history = this.state.history;
-    if(backTracking) {
-      // because they're backtracking we don't put the place we were just in into the history collection
-    } else {
-      history.push(travellingFrom);
-    }
+    let whereImAt = {
+      currentLocation : currentLocation, 
+      lastSeenLocation : lastSeenLocation,
+      nextLocation : nextLocation,    
+      possibleChoices : possibleChoices,   
+    };
+    let currentHistory = this.state.locationHistory;
+    currentHistory.push(whereImAt);
+    this.setState(
+      {
+        locationHistory : currentHistory
+      }
+    )
+  }
+
+  backtrackToLocation() {
+
+    let locationHistory = this.state.locationHistory;
+    locationHistory.pop(); // this is our currently location, throw it away!
+    // now get our last location, but keep it in the history array
+    let lastLocationHistory = locationHistory[locationHistory.length-1]; 
+
+    this.setState({
+      currentLocation : lastLocationHistory.currentLocation,
+      lastSeenLocation : lastLocationHistory.currentLocation,
+      nextLocation : lastLocationHistory.nextLocation,
+      possibleChoices : lastLocationHistory.possibleChoices,
+      cityTiles : this.createCityTiles(lastLocationHistory.nextLocation),
+      locationHistory : locationHistory
+    });
+    return;
+  }
+
+  travelToLocation(travelToLocation) {
 
     let locations = this.state.locations;
     if(travelToLocation.name === this.state.nextLocation.name) {
@@ -306,14 +334,12 @@ class Game extends React.Component {
       var nextLocation = this.getNextLocation(currentLocation, locations);
       var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, possibleChoiceCount - 1);
 
-
       this.setState({
         currentLocation : currentLocation,
         lastSeenLocation : currentLocation,
         nextLocation : nextLocation,
         possibleChoices : possibleChoices,
         cityTiles : this.createCityTiles(nextLocation),
-        history : history,
         stats : { 
           currentRightStreak : currentRight, 
           totalRightCount : this.state.stats.totalRightCount+1,
@@ -321,22 +347,21 @@ class Game extends React.Component {
          }
       });
 
+      this.createHistoryFromCurrent(currentLocation, currentLocation, nextLocation, possibleChoices);
+
       this.checkForCompletion(currentRight);
 
     } else {
-
-      // TODO - if they are travelling back then we should never get to a point of getting 3 random locations
-
 
       // they are not moving to the correct place ...
       var currentLocation = travelToLocation;
       // however, they might have moved to the last known place, in which case we want to setup the clues again and
       // ensure that the location they are meant to go to is one of the possible choices
-      let nextLocation = null;
+      let nextLocation = this.state.nextLocation;
       var possibleChoices = [];
       let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(0);
+      let lastSeenLocation = this.state.lastSeenLocation;
       if(currentLocation.name === this.state.lastSeenLocation.name) {
-        nextLocation = this.state.nextLocation;
         // next location has to be in the possible choices
         possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, possibleChoiceCount-1);
       } else {
@@ -345,23 +370,19 @@ class Game extends React.Component {
         possibleChoices = this.getPossibleChoices(currentLocation, null, locations, possibleChoiceCount);
       }
 
-      // if they're backtracking don't make that count as a wrong move ... but it's also not a right one
-      let totalWrong = backTracking ? this.state.stats.totalWrongCount : this.state.stats.totalWrongCount + 1;
-
       this.setState({
         currentLocation : currentLocation,
         //lastSeenLocation : currentLocation, // this doesn't change, they're still in the same last seen location
         //nextLocation : nextLocation, // this doesn't change, they're still in a location we haven't gone too
         possibleChoices : possibleChoices,
         cityTiles : this.createCityTiles(nextLocation),
-        history : history,
         stats : { 
           currentRightStreak : 0, 
           totalRightCount : this.state.stats.totalRightCount,
-          totalWrongCount : totalWrong 
+          totalWrongCount : this.state.stats.totalWrongCount + 1 
         }
       });
-
+      this.createHistoryFromCurrent(currentLocation, lastSeenLocation, nextLocation, possibleChoices);
     }
   }
 
@@ -550,6 +571,10 @@ class Game extends React.Component {
     // don't allow if the clue is still open
     if(this.state.displayClue) return;
 
+
+    this.backtrackToLocation();
+    return;
+
     let history = this.state.history;
     //let lastPlace = history.splice(-1);
     let lastPlace = history.splice(history.length-1);
@@ -666,11 +691,13 @@ class Game extends React.Component {
 
   render() {
 
-    var history = this.state.history;
-    var lastPlaceName = this.state.history.length > 0 ? this.state.history[this.state.history.length - 1].name : "";
-    const historyHtml = history.map((item, index) => {
+    var locationHistory = this.state.locationHistory;
+    var lastLocationName = locationHistory.length > 1 ? locationHistory[locationHistory.length - 2].currentLocation.name : "";
+    const locationHistoryHtml = locationHistory.map((item, index) => {
       return (
-        <div key={index}>{item.name}</div>
+        <div key={index}>
+          <div>current location: {item.currentLocation.name}</div>
+        </div>
       );
     });
 
@@ -682,7 +709,7 @@ class Game extends React.Component {
       );
     });
 
-    const backtrackHtml = history.length > 0 ? <div className="back-track-info" onClick={() => this.handleClickBacktrack() }>or go back track to where you were previously ... <span className="back-track-button">{lastPlaceName}</span></div> : "";
+    const backtrackHtml = locationHistory.length > 1 ? <div className="back-track-info" onClick={() => this.handleClickBacktrack() }>or go back track to where you were previously ... <span className="back-track-button">{lastLocationName}</span></div> : "";
 
     var clueClose = this.state.clueDisplayComplete || true ? <div className="close-clue-display" onClick={() => this.handleClickCloseCloseDisplay()}>X</div> : ""
     var clueDisplay = <div className="clue-display"><span className="clue-talker">{this.state.displayCityTile ? this.state.displayCityTile.talkingTo + ": " : ""}</span><span className="clue-text"></span>{clueClose}</div>;
@@ -704,11 +731,13 @@ class Game extends React.Component {
           {this.state.displayClue ? clueDisplay : ""}
         </div>
         <div><div className="possible-choices-heading">Where do you want to go?</div> <div className="possible-choice-container">{possibleChoicesHtml} </div></div>
-        {/* <div>{historyHtml}</div> */}
         {backtrackHtml}
         <div>so far got this many in a row: { this.state.stats.currentRightStreak }</div>
         <div>totalRightCount: { this.state.stats.totalRightCount }</div>
         <div>totalWrongCount: { this.state.stats.totalWrongCount }</div>
+        <div>
+          {locationHistoryHtml}
+        </div>
       </div>
     );
   }
