@@ -138,7 +138,7 @@ class Game extends React.Component {
       },
       {
         name : "Nelson",
-        clues : [ "They said they were heading to the oldest city in the South Island.", "They said they're going to where the World of Wearable Art started.", "I heard them say they were hading to a place know as the 'Top of the South'." ]
+        clues : [ "They said they were heading to the oldest city in the South Island.", "They said they're going to where the World of Wearable Arts started.", "I heard them say they were hading to a place know as the 'Top of the South'." ]
       },
       {
         name : "New Plymouth",
@@ -179,13 +179,13 @@ class Game extends React.Component {
       {
         name : "Wellington",
         clues : [ "They said they were hoping to see Te Papa.", "I heard them say the Maori name of where they are going is Pōneke.", "Apparently they are heading to the place often considered the windiest city in the world!" ]
-      },,
+      },
       {
         name : "Whanganui",
         clues : [ "Apparently where they're can be spelt two different ways, one way with an 'h' and one without.", "They said the place they're going is named the same as the river it is next too.", "I hard them say on a fine day you can see both Mount Ruapehu and Mount Taranaki from Durie Hill." ]
       },
       {
-        name : "Whangarai",
+        name : "Whangarei",
         clues : [ "They said they were heading to the northernmost city in New Zealand.", "Apparently the place they're heading is named the same as the harbour it is in.", "They mentioned the place they were heading to was sometimes called 'The Rei'" ]
       }
     ];
