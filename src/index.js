@@ -137,6 +137,14 @@ class Game extends React.Component {
         clues : [ "They said that where they're going is sometimes called 'Nice of the Pacific'.", "Apparently where they're going is known as one of the Bay Cities, along with it's close neighbour." , "They said they were going to see the National Aquarium of New Zealand." ]
       },
       {
+        name : "Nelson",
+        clues : [ "They said they were heading to the oldest city in the South Island.", "They said they're going to where the World of Wearable Art started.", "I heard them say they were hading to a place know as the 'Top of the South'." ]
+      },
+      {
+        name : "New Plymouth",
+        clues : [ "They said the were heading to where TSB Bank is based.", "They mentioned they wanted to see a chimney? Apparently it's the second tallest man-made structure in New Zealand.", "They said they would like to see WOMAD or the Festival of Lights one day." ]
+      },
+      {
         name : "Ohakune",
         clues : [ "They mentioned going to visit a big carrot?", "I heard them say something about popping in to visit Mount Ruapehu." ]
       },
@@ -161,12 +169,24 @@ class Game extends React.Component {
         clues : [ "They said that the port where they're going exports the most tonnage in New Zealand.", "They mentioned they were hoping to climb Mount Maunganui.", "I heard them say they were heading to the fastest growning city in New Zealand." ]
       },
       {
+        name : "Upper Hutt",
+        clues : [ "The place they were going to is in the north of a valley with another city with a really similar name.", "They told me name of the place they're going to is similar to the name of a star wars character.", "Apparently the place they are heading too includes some of the Remutaka ranges and almost reaches the Kapiti Coast." ]
+      },
+      {
         name : "Waitomo",
-        clues : [ "They said they were going to see glow worms.", "I heard talk of visiting a really big apple." ]
+        clues : [ "They said they were going to see glow worms in some big caves.", "I heard talk of visiting a really big apple." ]
       },
       {
         name : "Wellington",
         clues : [ "They said they were hoping to see Te Papa.", "I heard them say the Maori name of where they are going is Pōneke.", "Apparently they are heading to the place often considered the windiest city in the world!" ]
+      },,
+      {
+        name : "Whanganui",
+        clues : [ "Apparently where they're can be spelt two different ways, one way with an 'h' and one without.", "They said the place they're going is named the same as the river it is next too.", "I hard them say on a fine day you can see both Mount Ruapehu and Mount Taranaki from Durie Hill." ]
+      },
+      {
+        name : "Whangarai",
+        clues : [ "They said they were heading to the northernmost city in New Zealand.", "Apparently the place they're heading is named the same as the harbour it is in.", "They mentioned the place they were heading to was sometimes called 'The Rei'" ]
       }
     ];
 
