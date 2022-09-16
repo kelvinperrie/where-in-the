@@ -752,12 +752,12 @@ class Game extends React.Component {
         </div>
         <div><div className="possible-choices-heading">Where do you want to go?</div> <div className="possible-choice-container">{possibleChoicesHtml} </div></div>
         {backtrackHtml}
-        <div>so far got this many in a row: { this.state.stats.currentRightStreak }</div>
+        {/* <div>so far got this many in a row: { this.state.stats.currentRightStreak }</div>
         <div>totalRightCount: { this.state.stats.totalRightCount }</div>
         <div>totalWrongCount: { this.state.stats.totalWrongCount }</div>
         <div>
           {locationHistoryHtml}
-        </div>
+        </div> */}
       </div>
     );
   }
