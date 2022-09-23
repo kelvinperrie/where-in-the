@@ -227,7 +227,7 @@ class Game extends React.Component {
 
     // how many different images of each type do we have? this is used to pick random images
     let imageCounts = {
-      shop : 4,
+      shop : 5,
       citizen : 5
     };
 
@@ -777,13 +777,13 @@ class Game extends React.Component {
         </div>
         <div><div className="possible-choices-heading">Where do you want to go?</div> <div className="possible-choice-container">{possibleChoicesHtml} </div></div>
         {backtrackHtml}
-        <div>current level: { this.state.stats.currentLevel }</div>
+        {/* <div>current level: { this.state.stats.currentLevel }</div>
         <div>so far got this many in a row: { this.state.stats.currentRightStreak }</div>
         <div>totalRightCount: { this.state.stats.totalRightCount }</div>
         <div>totalWrongCount: { this.state.stats.totalWrongCount }</div>
         <div>
           {locationHistoryHtml}
-        </div>
+        </div> */}
       </div>
     );
   }
