@@ -235,7 +235,8 @@ class Game extends React.Component {
     let stats = {
       totalRightCount : 0,
       totalWrongCount : 0,
-      currentRightStreak : 0
+      currentRightStreak : 0,
+      currentLevel : 1                      // track what level they're on; makes it easier/harder
     }
 
     this.state = {
@@ -268,7 +269,7 @@ class Game extends React.Component {
 
     var currentLocation = this.getRandomLocation(locations);
     var nextLocation = this.getNextLocation(currentLocation, locations);
-    let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(0);
+    let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(1);
 
     var possibleChoices = this.getPossibleChoices(currentLocation, nextLocation, locations, possibleChoiceCount-1);
 
@@ -284,26 +285,41 @@ class Game extends React.Component {
 
   }
 
-  // see if the game is over
-  checkForCompletion(currentRight) {
-    // if you get a certain amount right in a row then you're a winner
-    if(currentRight == 8) {
+  // method ot check if the game has been completed
+  checkForCompletion(currentLevel) {
+    // if you get to a certain level then you're a winner
+    if(currentLevel == 5) {
       this.setState({ showCompletion : true });
     }
   }
 
+  // method to see if we need to go up a level
+  checkForLevelUp(currentRightStreak) {
+    console.log("checking for level up, currentRightStreak is "+ currentRightStreak)
+    // see if they've just got 3 (or a multiple of 3) right in a row
+    if(currentRightStreak % 3 == 0) {
+      // increase the level by one
+      let stats = this.state.stats;
+      stats.currentLevel++
+      this.setState({ stats : stats });
+      // see if the game is over
+      this.checkForCompletion(stats.currentLevel)
+      return stats.currentLevel;
+    }
+    return this.state.stats.currentLevel;
+  }
+
   // this determines how many buttons of possible locations to travel to should be shown
   // the better the player is doing the more buttons show / which makes it harder
-  decideHowManyPossibleChoicesToShow(currentRightStreak) {
-    if(currentRightStreak > 6) {
-      return 6;
-    } else if(currentRightStreak > 4) {
-      return 5;
-    } else if (currentRightStreak > 2) {
-      return 4;
-    } else {
-      return 3;
-    }
+  decideHowManyPossibleChoicesToShow(currentLevel) {
+    console.log("currentLevel is " + currentLevel)
+    // if level 1 then show 3 options
+    // level 2 show 4 options
+    // level 3 show 5 options
+    // etc
+
+    return currentLevel + 2;
+
   }
 
   createHistoryFromCurrent(currentLocation, lastSeenLocation, nextLocation, possibleChoices) {
@@ -348,7 +364,10 @@ class Game extends React.Component {
       // they are moving to the correct place :)
       
       let currentRight = this.state.stats.currentRightStreak+1;
-      let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(currentRight);
+
+      let currentLevel = this.checkForLevelUp(currentRight);
+
+      let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(currentLevel);
 
       var currentLocation = travelToLocation;
       var nextLocation = this.getNextLocation(currentLocation, locations);
@@ -363,13 +382,13 @@ class Game extends React.Component {
         stats : { 
           currentRightStreak : currentRight, 
           totalRightCount : this.state.stats.totalRightCount+1,
-          totalWrongCount : this.state.stats.totalWrongCount
+          totalWrongCount : this.state.stats.totalWrongCount,
+          currentLevel : this.state.stats.currentLevel
          }
       });
 
       this.createHistoryFromCurrent(currentLocation, currentLocation, nextLocation, possibleChoices);
 
-      this.checkForCompletion(currentRight);
 
     } else {
 
@@ -379,7 +398,7 @@ class Game extends React.Component {
       // ensure that the location they are meant to go to is one of the possible choices
       let nextLocation = this.state.nextLocation;
       var possibleChoices = [];
-      let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(0);
+      let possibleChoiceCount = this.decideHowManyPossibleChoicesToShow(1);
       let lastSeenLocation = this.state.lastSeenLocation;
       if(currentLocation.name === this.state.lastSeenLocation.name) {
         // next location has to be in the possible choices
@@ -388,6 +407,11 @@ class Game extends React.Component {
         // pass null for the next location so we end up with 3 random possible locations - there is a chance
         // it will have the next location in it, but probably not
         possibleChoices = this.getPossibleChoices(currentLocation, null, locations, possibleChoiceCount);
+      }
+
+      let level = this.state.stats.currentLevel;
+      if(level != 1) {
+        level--;
       }
 
       this.setState({
@@ -399,7 +423,8 @@ class Game extends React.Component {
         stats : { 
           currentRightStreak : 0, 
           totalRightCount : this.state.stats.totalRightCount,
-          totalWrongCount : this.state.stats.totalWrongCount + 1 
+          totalWrongCount : this.state.stats.totalWrongCount + 1,
+          currentLevel : level
         }
       });
       this.createHistoryFromCurrent(currentLocation, lastSeenLocation, nextLocation, possibleChoices);
@@ -752,12 +777,13 @@ class Game extends React.Component {
         </div>
         <div><div className="possible-choices-heading">Where do you want to go?</div> <div className="possible-choice-container">{possibleChoicesHtml} </div></div>
         {backtrackHtml}
-        {/* <div>so far got this many in a row: { this.state.stats.currentRightStreak }</div>
+        <div>current level: { this.state.stats.currentLevel }</div>
+        <div>so far got this many in a row: { this.state.stats.currentRightStreak }</div>
         <div>totalRightCount: { this.state.stats.totalRightCount }</div>
         <div>totalWrongCount: { this.state.stats.totalWrongCount }</div>
         <div>
           {locationHistoryHtml}
-        </div> */}
+        </div>
       </div>
     );
   }
