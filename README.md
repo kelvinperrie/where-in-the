@@ -10,3 +10,4 @@ This is kind of a "Where in the world is Carmen Sandiago" but set in New Zealand
 todo:
 * more town info
 * more pictures
+* am I missing macrons? I think I'm missing some macrons!

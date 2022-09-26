@@ -727,7 +727,7 @@ class Game extends React.Component {
           <br/><br/>
           You'll have to get a few right in a row to catch up to Charlie, good luck!
           <br/><br/>
-          When you're ready Click the X in the top corner to close this introduction.
+          When you're ready click the X in the top corner to close this introduction.
         </span>
         {introClose}
       </div>
@@ -754,7 +754,7 @@ class Game extends React.Component {
       );
     });
 
-    const backtrackHtml = locationHistory.length > 1 ? <div className="back-track-info" onClick={() => this.handleClickBacktrack() }>or go back track to where you were previously ... <span className="back-track-button">{lastLocationName}</span></div> : "";
+    const backtrackHtml = locationHistory.length > 1 ? <div className="back-track-info" onClick={() => this.handleClickBacktrack() }><span className="back-help-text">or go back to where you were previously ... </span><span className="back-track-button">{lastLocationName}</span></div> : "";
 
     var clueClose = this.state.clueDisplayComplete || true ? <div className="close-clue-display" onClick={() => this.handleClickCloseCloseDisplay()}>X</div> : ""
     var clueDisplay = <div className="clue-display"><span className="clue-talker">{this.state.displayCityTile ? this.state.displayCityTile.talkingTo + ": " : ""}</span><span className="clue-text"></span>{clueClose}</div>;
@@ -766,6 +766,7 @@ class Game extends React.Component {
         {this.outputIntro()}
         {this.outputFinish()}
         <div className="location-info">
+          <div className="game-title">Where in New Zealnd is Charlie Singh?</div>
           <div className="location"><span className="location-title">You are currently in </span><div className="current-location">{ this.state.currentLocation ? this.state.currentLocation.name + "!" : "unknown" }</div></div>
           {/* <div className="location">Last Seen:    { this.state.lastSeenLocation ? this.state.lastSeenLocation.name + "!" : "unknown" }</div>
           <div className="location">Next:    { this.state.nextLocation ? this.state.nextLocation.name + "!" : "unknown" }</div>

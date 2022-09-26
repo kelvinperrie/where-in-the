@@ -98,14 +98,19 @@ ol, ul {
   text-align: right;
   padding-right: 0.5em; */
 }
-
+.game-title {
+  text-align: center;
+  font-size: 1.4em;
+}
+.location-info {
+  font-family: 'Caveat', cursive;
+}
 .location-title {
   font-size: 1.3em;
-  font-family: 'Dancing Script', cursive;
 }
 .location {
   text-align: center;
-  color: #ff9800;
+  color: #834e00;
   background-color: #fff;
   margin: 0 0 1em 0;
 }
@@ -122,14 +127,14 @@ ol, ul {
 }
 .possible-choice {
   text-align: center;
-  border: 3px orange solid;
+  border: 3px #834e00 solid;
   border-radius: 10px;
   background-color: white;
   padding: 0.25em 0;
   /* margin: 0.1em 0.25em; */
   font-size: 1.5em;
   cursor: pointer;
-  color: #ff9800;
+  color: #834e00;
   width: 30%;
   user-select: none;
 }
@@ -143,21 +148,36 @@ ol, ul {
 }
 .possible-choices-heading {
   margin: .5em 0;
+  font-family: 'Caveat', cursive;
+  font-size: 1.4em;
 }
 
 .back-track-info {
   margin-top: 1em;
   line-height: 2em; /* so when the line wraps the button doesn't go over the text*/
 }
+.back-help-text {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4em;
+}
 
 .back-track-button {
-  border: 3px orange solid;
+  border: 3px #834e00 solid;
   border-radius: 10px;
   background-color: white;
   padding: 0.25em 0.5em;
   margin: 0.1em 0.25em;
   font-size: 1.5em;
   cursor: pointer;
-  color: #ff9800;
+  color: #834e00;
   user-select: none;
+}
+.back-track-button:hover {
+  background-color: #f9d9a5;
+}
+
+.source-link{
+  position: absolute;
+  right: 3px;
+  top: 3px;
 }
