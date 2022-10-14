@@ -181,3 +181,15 @@ ol, ul {
   right: 3px;
   top: 3px;
 }
+
+.filler  {
+  position: absolute;
+  /* background-color: yellow;
+  opacity: 0.5; */
+  width: 15%;
+  height: 20%;
+}
+.filler1 {
+  left: 24%;
+  top: 5%;
+} 

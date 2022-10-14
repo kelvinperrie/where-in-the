@@ -170,11 +170,11 @@ class Game extends React.Component {
       },
       {
         name : "Upper Hutt",
-        clues : [ "The place they were going to is in the north of a valley with another city with a really similar name.", "They told me name of the place they're going to is similar to the name of a star wars character.", "Apparently the place they are heading too includes some of the Remutaka ranges and almost reaches the Kapiti Coast." ]
+        clues : [ "The place they were going to is in the north of a valley that also has another city with a really similar name.", "They told me name of the place they're going to is similar to the name of a star wars character.", "Apparently the place they are heading too includes some of the Remutaka ranges and almost reaches the Kapiti Coast." ]
       },
       {
         name : "Waitomo",
-        clues : [ "They said they were going to see glow worms in some big caves.", "I heard talk of visiting a really big apple." ]
+        clues : [ "They said they were going to see glow worms in some big caves.", "I heard them talking about visiting a really big apple. Sounded tasty." ]
       },
       {
         name : "Wellington",
@@ -182,7 +182,7 @@ class Game extends React.Component {
       },
       {
         name : "Whanganui",
-        clues : [ "Apparently where they're can be spelt two different ways, one way with an 'h' and one without.", "They said the place they're going is named the same as the river it is next too.", "I hard them say on a fine day you can see both Mount Ruapehu and Mount Taranaki from Durie Hill." ]
+        clues : [ "They said where they're going can be spelt two different ways; sometimes with an 'h' in it and sometimes without.", "They said the place they're going is named the same as the river it is next too.", "I heard them say on a fine day you can see both Mount Ruapehu and Mount Taranaki from Durie Hill." ]
       },
       {
         name : "Whangarei",
@@ -759,7 +759,7 @@ class Game extends React.Component {
     var clueClose = this.state.clueDisplayComplete || true ? <div className="close-clue-display" onClick={() => this.handleClickCloseCloseDisplay()}>X</div> : ""
     var clueDisplay = <div className="clue-display"><span className="clue-talker">{this.state.displayCityTile ? this.state.displayCityTile.talkingTo + ": " : ""}</span><span className="clue-text"></span>{clueClose}</div>;
 
-
+    let fillerHtml = <div className="filler filler1"><img src="images/street-light.gif" alt="filler image" /></div>
 
     return (
       <div className="game">
@@ -773,6 +773,7 @@ class Game extends React.Component {
            */}
         </div>
         <div className="game-board" key="sdf112sdf">
+           {fillerHtml}
           <City cityTiles={this.state.cityTiles} handleClickCityTile={(index) => this.handleClickCityTile(index)}/>
           {this.state.displayClue ? clueDisplay : ""}
         </div>
