@@ -259,6 +259,24 @@ class Game extends React.Component {
       ] 
     }
 
+    const possibleFillerAnimations = [
+      {
+        name : "lamppost",
+        sequence : [
+          { image : "images\\lamp-unlit.png", pause : "3000" },
+          { image : "images\\lamp-lit.png", pause : "3000" },
+        ],
+        possiblePositions : [
+          { left :"24%", top: "5%" },
+          { left: "57%", top: "5%" },
+          { left :"24%", top: "38%" },
+          { left: "57%", top: "38%" },
+          { left :"24%", top: "72%" },
+          { left: "57%", top: "72%" },
+        ]
+      }
+    ]
+
     super(props);
 
     // how many different images of each type do we have? this is used to pick random images
@@ -281,6 +299,7 @@ class Game extends React.Component {
       locations : locations,                // all the potential locations that can be travelled too
       stats: stats,                         // records the players progression
       possibleResponses: possibleResponses, // all the potential non-clue responses that can be made
+      possibleFillerAnimations: possibleFillerAnimations,
       currentLocation : null,               // where the user currently is located
       lastSeenLocation : null,              // where we last saw some clues
       nextLocation : null,                  // the location the user is tring to find
@@ -512,13 +531,18 @@ class Game extends React.Component {
   createCityTiles(nextLocation) {
 
     this.cancelAllFillerAnimations();
-    let sequence = [
-      { image : "images\\lamp-unlit.png", pause : "3000" },
-      { image : "images\\lamp-lit.png", pause : "3000" },
-    ];
-    let styles = { left :"24%", top: "5%" };
-    let animation = new FillerAnimation("filler1", styles, sequence);
-    this.fillerAnimations.push(animation);
+    // let sequence = [
+    //   { image : "images\\lamp-unlit.png", pause : "3000" },
+    //   { image : "images\\lamp-lit.png", pause : "3000" },
+    // ];
+    // let styles = { left :"24%", top: "5%" };
+
+    let animation = this.state.possibleFillerAnimations[0];
+    let positionIndex = randomIntFromInterval(0, animation.possiblePositions.length - 1);
+    let position = animation.possiblePositions[positionIndex];
+
+    let filterAnimation = new FillerAnimation("filler1", position, animation.sequence);
+    this.fillerAnimations.push(filterAnimation);
 
 
     let cityTiles = Array(9).fill(null);
