@@ -22,10 +22,46 @@ class City extends React.Component {
   }
 }
 
+var FillerAnimation = function(id, styles, animationSequence) {
+  let self = this;
+
+  self.animationSequence = animationSequence;
+  self.id = id;  
+  self.styles = styles;
+  self.currentFrame = -1; // because the nextFrame is going to increment
+  self.timeoutId = -1; // -1 means we haven't started yet, 0 means we've been cancelled
+
+  self.cancel = function() {
+    
+    console.log("about to cancel filler animations with timeoutId of " + self.timeoutId)
+    clearTimeout(self.timeoutId);
+    self.timeoutId = 0; // probably don't need to do this
+  }
+
+  self.nextFrame = function() {
+    console.log("in next frame")
+    if(self.timeoutId == 0) {
+      return;
+    }
+    self.currentFrame++;
+    if(self.currentFrame === self.animationSequence.length) {
+      self.currentFrame = 0;
+    }
+    $("#"+self.id).attr("src", self.animationSequence[self.currentFrame].image);
+    self.timeoutId = setTimeout(self.nextFrame,self.animationSequence[self.currentFrame].pause)
+  }
+  
+  self.currentImage = function() {
+    return self.animationSequence[self.currentFrame].image;
+  }
+
+  self.nextFrame();
+}
 
 class Game extends React.Component {
 
   personImageIndex = 0; // tracks what person image index we're currently up to, so rather than randomly selecting an image we can iterate through them
+  fillerAnimations = [];
 
   constructor(props) {
     
@@ -230,6 +266,8 @@ class Game extends React.Component {
       shop : 5,
       citizen : 5
     };
+
+
 
     // an object to track how the player is doing
     let stats = {
@@ -461,7 +499,28 @@ class Game extends React.Component {
     return helpfulPerson;
   }
 
+  cancelAllFillerAnimations() {
+    console.log("about to cancel all filler animations")
+    // cancel any timeouts currently in action
+    for(let i = 0; i < this.fillerAnimations.length; i++) {
+      this.fillerAnimations[i].cancel();
+    }
+    // clear the array of filler animations
+    this.fillerAnimations = [];
+  }
+
   createCityTiles(nextLocation) {
+
+    this.cancelAllFillerAnimations();
+    let sequence = [
+      { image : "images\\lamp-unlit.png", pause : "3000" },
+      { image : "images\\lamp-lit.png", pause : "3000" },
+    ];
+    let styles = { left :"24%", top: "5%" };
+    let animation = new FillerAnimation("filler1", styles, sequence);
+    this.fillerAnimations.push(animation);
+
+
     let cityTiles = Array(9).fill(null);
     // for each of our clues put them into a city tile
     if(nextLocation) {
@@ -473,9 +532,6 @@ class Game extends React.Component {
           if(null === cityTiles[cityIndex]) {
 
             let person = this.assignPersonDetails();
-
-            // console.log("setting clue " + i + " to tile " + nextLocation.clues[i])
-            // console.log(person)
             cityTiles[cityIndex] = {
               talkingTo: person.talkingTo,
               clue: nextLocation.clues[i],
@@ -759,7 +815,12 @@ class Game extends React.Component {
     var clueClose = this.state.clueDisplayComplete || true ? <div className="close-clue-display" onClick={() => this.handleClickCloseCloseDisplay()}>X</div> : ""
     var clueDisplay = <div className="clue-display"><span className="clue-talker">{this.state.displayCityTile ? this.state.displayCityTile.talkingTo + ": " : ""}</span><span className="clue-text"></span>{clueClose}</div>;
 
-    let fillerHtml = <div className="filler filler1"><img src="images/street-light.gif" alt="filler image" /></div>
+    // add in any filler animations
+    const fillerHtml = this.fillerAnimations.map((fillerAnimation, index) => {
+      return (
+        <img className="filler filler1" style={fillerAnimation.styles} key={index} id={fillerAnimation.id} src={fillerAnimation.currentImage()} alt="filler image" />
+      );
+    });
 
     return (
       <div className="game">
