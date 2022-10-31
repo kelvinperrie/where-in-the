@@ -263,8 +263,56 @@ class Game extends React.Component {
       {
         name : "lamppost",
         sequence : [
-          { image : "images\\lamp-unlit.png", pause : "3000" },
-          { image : "images\\lamp-lit.png", pause : "3000" },
+          { image : "images\\lamp-unlit.png", pause : "5000" },
+          { image : "images\\lamp-lit.png", pause : "150" },
+          { image : "images\\lamp-unlit.png", pause : "150" },
+          { image : "images\\lamp-lit.png", pause : "150" },
+          { image : "images\\lamp-unlit.png", pause : "150" },
+          { image : "images\\lamp-lit.png", pause : "150" },
+          { image : "images\\lamp-unlit.png", pause : "150" },
+          { image : "images\\lamp-lit.png", pause : "10000" },
+        ],
+        possiblePositions : [
+          { left :"24%", top: "5%" },
+          { left: "57%", top: "5%" },
+          { left :"24%", top: "38%" },
+          { left: "57%", top: "38%" },
+          { left :"24%", top: "72%" },
+          { left: "57%", top: "72%" },
+        ]
+      },
+      {
+        name : "catCircle",
+        sequence : [
+          { image : "images\\cat circle 1.png", pause : "5000" },
+          { image : "images\\cat circle 2.png", pause : "100" },
+          { image : "images\\cat circle 3.png", pause : "100" },
+          { image : "images\\cat circle 4.png", pause : "100" },
+          { image : "images\\cat circle 5.png", pause : "100" },
+          { image : "images\\cat circle 6.png", pause : "100" },
+          { image : "images\\cat circle 1.png", pause : "10000" }
+        ],
+        possiblePositions : [
+          { left :"24%", top: "5%" },
+          { left: "57%", top: "5%" },
+          { left :"24%", top: "38%" },
+          { left: "57%", top: "38%" },
+          { left :"24%", top: "72%" },
+          { left: "57%", top: "72%" },
+        ]
+      },
+      {
+        name : "birdCircle",
+        sequence : [
+          { image : "images\\bird circle 1.png", pause : "5000" },
+          { image : "images\\bird circle 2.png", pause : "150" },
+          { image : "images\\bird circle 3.png", pause : "150" },
+          { image : "images\\bird circle 4.png", pause : "150" },
+          { image : "images\\bird circle 5.png", pause : "150" },
+          { image : "images\\bird circle 6.png", pause : "150" },
+          { image : "images\\bird circle 7.png", pause : "150" },
+          { image : "images\\bird circle 8.png", pause : "150" },
+          { image : "images\\bird circle 1.png", pause : "1000" }
         ],
         possiblePositions : [
           { left :"24%", top: "5%" },
@@ -524,20 +572,19 @@ class Game extends React.Component {
     for(let i = 0; i < this.fillerAnimations.length; i++) {
       this.fillerAnimations[i].cancel();
     }
-    // clear the array of filler animations
+    // clear the array of filler animations so we can fill it again later
     this.fillerAnimations = [];
   }
 
   createCityTiles(nextLocation) {
 
     this.cancelAllFillerAnimations();
-    // let sequence = [
-    //   { image : "images\\lamp-unlit.png", pause : "3000" },
-    //   { image : "images\\lamp-lit.png", pause : "3000" },
-    // ];
-    // let styles = { left :"24%", top: "5%" };
 
-    let animation = this.state.possibleFillerAnimations[0];
+    // do we want multiple animations? do we want them just sometimes?
+    // I don't know, lets just always put in one and see how it goes
+    let randomAnimationIndex = randomIntFromInterval(0, this.state.possibleFillerAnimations.length - 1);
+    let animation = this.state.possibleFillerAnimations[randomAnimationIndex];
+    // animations can show in different positions, lets randomly pick one
     let positionIndex = randomIntFromInterval(0, animation.possiblePositions.length - 1);
     let position = animation.possiblePositions[positionIndex];
 
