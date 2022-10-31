@@ -893,8 +893,17 @@ class Game extends React.Component {
       );
     });
 
+    // can we preload the images used in the animations? I don't know! let's try!
+    const allPreLoadImages = this.state.possibleFillerAnimations.map((animation, index) => {
+      let fillerImages = animation.sequence.map((sequence, index) => {
+        return <link rel="preload" as="image" href={sequence.image}></link>
+      })
+      return fillerImages;
+    }); 
+
     return (
       <div className="game">
+        {allPreLoadImages}
         {this.outputIntro()}
         {this.outputFinish()}
         <div className="location-info">
