@@ -97,12 +97,20 @@ class Game extends React.Component {
         clues : [ "I heard they were heading too the largest town in South Otago.", "They said something about going halfway between Dunedin and Gore.","Apparently it's a Scottish name, the English translation is 'Town on the Clyde'." ]
       },
       {
+        name : "Blenheim",
+        clues : [ "Apparently where they're going has an airshow every couple of years with fighters from World War One.", "They said they were going to a region well know for its wine.", "I heard them mention they were hoping to see the salt works that makes 50% of New Zealand's salt." ]
+      },
+      {
         name : "Bluff",
         clues : [ "I heard they were heading to the southern most town of mainland NZ.", "They said the place they were going was a long time ago called Campbelltown.","They had wanted to see the paua house and were sad that it's no longer there." ]
       },
       {
         name : "Bulls",
-        clues : [ "Sounds like the place she is going likes to make puns with the name of the town.", "They said it was where state highway 1 and 3 meet.","I overheard them say there was an airforce base close by to where they were going." ]
+        clues : [ "Sounds like the place they are going to likes to make puns with the name of the town.", "They said it was where state highway 1 and 3 meet.","I overheard them say there was an airforce base close by to where they were going." ]
+      },
+      {
+        name : "Cambridge",
+        clues : [ "Sounds like the place they're going to is well known for breeding horses.", "They said the place they're heading too is called 'The Town of Trees & Champions.", "I do know that where they're going is on the banks of the Waikato river." ]
       },
       {
         name : "Christchurch",
@@ -193,6 +201,10 @@ class Game extends React.Component {
         clues : [ "They giggled a lot about getting a photo of a big softdrink, it was weird.", "Pretty sure they were heading to the Hauraki District." ]
       },
       {
+        name : "Queenstown",
+        clues : [ "I heard them say the place they're going has great skiing, snowboarding and even some jet boating.", "Apparently the place they're going is on the edge of a lake.", "Where they're going is considered a resort town with a lot of adventure tourism activites." ]
+      },
+      {
         name : "Rotorua",
         clues : [ "They were heading to the second largest city in the Bay of Plenty region.", "They joked that they were heading to vegas.. but in New Zealand?!", "I heard them say something about looking at some hot mud?" ]
       },
@@ -201,8 +213,16 @@ class Game extends React.Component {
         clues : [ "They made a joke about wearing a big gumboot. I didn't get it", "I know they were travelling on State Highway 1." ]
       },
       {
+        name : "Taupō",
+        clues : [ "They told me they were going to pop in and visit Tongariro National Park to the south.", "They were heading to the biggest lake in New Zealand.","I heard them say they wanted to see the Huka Falls." ]
+      },
+      {
         name : "Tauranga",
         clues : [ "They said that the port where they're going exports the most tonnage in New Zealand.", "They mentioned they were hoping to climb Mount Maunganui.", "I heard them say they were heading to the fastest growning city in New Zealand." ]
+      },
+      {
+        name : "Timaru",
+        clues : [ "Where they're going was originally used as a whaling station, then was two towns called Government Town and Rhodestorn before they were merged.", "I heard them say the place has a junction for state highway 8 which heads to Mount Cook/Aoraki and Queenstown", "They mentioned she was heading to South Canterbury." ]
       },
       {
         name : "Upper Hutt",
