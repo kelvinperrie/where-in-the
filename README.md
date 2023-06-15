@@ -11,3 +11,4 @@ todo:
 * more town info
 * more pictures
 * am I missing macrons? I think I'm missing some macrons!
+* there's a super big bug if you go back to a previous location. So probably don't.
